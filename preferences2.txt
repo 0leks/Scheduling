@@ -1,0 +1,11 @@
+N Y Y Y Y asdf
+Y N Y N N asdf2
+Y N N N Y asdf3
+N Y Y N N asdf4
+N Y N N Y asdf5
+Y Y Y Y N asdf6
+N N N Y Y asdf7
+Y Y N Y N asdf8
+N N N Y N asdf9
+Y N Y N N asdf10
+N N N N Y asdf11
