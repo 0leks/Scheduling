@@ -2,14 +2,10 @@ package main;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.LayoutManager2;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -17,16 +13,12 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionAdapter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -37,11 +29,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
-import javax.swing.JSpinner;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.Scrollable;
-import javax.swing.SpinnerListModel;
 import javax.swing.SwingConstants;
 
 public class Driver {
@@ -81,6 +70,7 @@ public class Driver {
   private List<Employee> employees;
 
   private int weekOffset = 0;
+  private int numWeeks = 5;
   
   public Driver() {
 
@@ -104,7 +94,7 @@ public class Driver {
     mainPanel.setBackground(COLOR_BACKGROUND);
 
     buttonPanel = new JPanel();
-    buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 50));
+    buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 30, 30));
     buttonPanel.setPreferredSize(new Dimension(300, 500));
     mainPanel.add(buttonPanel);
 
@@ -115,21 +105,23 @@ public class Driver {
       public void mousePressed(MouseEvent e) {
         int daypressed = e.getX() / viewPanel.getCellWidth();
         int weekpressed = e.getY() / viewPanel.getCellHeight();
-        days[weekpressed][daypressed].toggleHoliday();
-        if (days[weekpressed][daypressed].isHoliday()) {
-          JTextField field = viewPanel.addHolidayField(weekpressed, daypressed, holidayNames.getText());
-          field.setHorizontalAlignment(JTextField.CENTER);
-          field.setBackground(COLOR_TEXTFIELD);
-          days[weekpressed][daypressed].setTextField(field);
-          field.selectAll();
-          field.requestFocus();
-        } else {
-          if( days[weekpressed][daypressed].getTextField() != null ) {
-            viewPanel.remove(days[weekpressed][daypressed].getTextField());
+        if( weekpressed >= 0 && weekpressed < days.length ) {
+          days[weekpressed][daypressed].toggleHoliday();
+          if (days[weekpressed][daypressed].isHoliday()) {
+            JTextField field = viewPanel.addHolidayField(weekpressed, daypressed, holidayNames.getText());
+            field.setHorizontalAlignment(JTextField.CENTER);
+            field.setBackground(COLOR_TEXTFIELD);
+            days[weekpressed][daypressed].setTextField(field);
+            field.selectAll();
+            field.requestFocus();
+          } else {
+            if( days[weekpressed][daypressed].getTextField() != null ) {
+              viewPanel.remove(days[weekpressed][daypressed].getTextField());
+            }
+            days[weekpressed][daypressed].setTextField(null);
           }
-          days[weekpressed][daypressed].setTextField(null);
+          frame.repaint();
         }
-        frame.repaint();
       }
     });
     mainPanel.add(viewPanel);
@@ -149,6 +141,19 @@ public class Driver {
 //      }
 //    });
 //    buttonPanel.add(months);
+    
+    JComboBox<String> weekSelector = new JComboBox<String>(new String[] { "1 week", "2 weeks", "3 weeks", "4 weeks", "5 weeks"});
+    weekSelector.setSelectedIndex(4);
+    weekSelector.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        numWeeks = weekSelector.getSelectedIndex() + 1;
+        setUpCalendar();
+        frame.repaint();
+      }
+    });
+    weekSelector.setFont(mediumFont);
+    buttonPanel.add(weekSelector);
     
     timeframe = new JPanel();
     JButton leftShift = new JButton("<<<");
@@ -408,8 +413,8 @@ public class Driver {
   }
 
   public void applyHolidays() {
-    for (int week = 0; week < 5; week++) {
-      for (int day = 0; day < 5; day++) {
+    for (int week = 0; week < days.length; week++) {
+      for (int day = 0; day < days[week].length; day++) {
         JTextField field = days[week][day].getTextField();
         if( field != null ) {
           days[week][day].absorbTextField();
@@ -420,7 +425,7 @@ public class Driver {
   }
   public void setUpCalendar() {
     Day[][] olddays = days;
-    days = new Day[5][5];
+    days = new Day[numWeeks][5]; // TODO
     month1 = null;
     month2 = null;
     year1 = 0;
@@ -437,17 +442,20 @@ public class Driver {
     
     weekofyear = cal.get(Calendar.WEEK_OF_YEAR);
     
-    for (int week = 0; week < 5; week++) {
-      for (int day = 0; day < 5; day++) {
+    for (int week = 0; week < days.length; week++) {
+      for (int day = 0; day < days[week].length; day++) {
         int date = cal.get(Calendar.DAY_OF_MONTH);
         int dayofyear = cal.get(Calendar.DAY_OF_YEAR);
-        Day exists = getDaybyID(olddays, dayofyear);
+        Day exists = null;
+        if( olddays != null && week < olddays.length && day < olddays[week].length ) {
+          exists = getDaybyID(olddays, dayofyear);
+        }
         
         String nameofmonth =  Day.getNameofMonth(cal.get(Calendar.MONTH));
         if( month1 == null ) {
           month1 = nameofmonth;
         }
-        else {
+        else if( !month1.equals(nameofmonth) ) {
           month2 = nameofmonth;
         }
         
@@ -486,8 +494,8 @@ public class Driver {
   }
   
   public void absorbTextFields() {
-    for (int week = 0; week < 5; week++) {
-      for (int day = 0; day < 5; day++) {
+    for (int week = 0; week < days.length; week++) {
+      for (int day = 0; day < days[week].length; day++) {
         JTextField field = days[week][day].getTextField();
         if( field != null ) {
           days[week][day].absorbTextField();
@@ -500,8 +508,8 @@ public class Driver {
     if( cal == null ) {
       return null;
     }
-    for (int week = 0; week < 5; week++) {
-      for (int day = 0; day < 5; day++) {
+    for (int week = 0; week < days.length; week++) {
+      for (int day = 0; day < days[week].length; day++) {
         
         if( cal[week][day] != null && cal[week][day].getID() == id ) {
           return cal[week][day];
@@ -599,21 +607,23 @@ public class Driver {
       int height = this.getHeight();
       int cellwidth = width / 5;
       int cellheight = height / 5;
-      g.setColor(COLOR_CALENDAR);
+      g.setColor(COLOR_BACKGROUND);
       g.fillRect(0, 0, width, height);
 
       int fontsize = tinyFont.getSize();
       g.setFont(tinyFont);
       g.setColor(Color.black);
-      for (int week = 0; week < 5; week++) {
-        for (int day = 0; day < 5; day++) {
+      for (int week = 0; week < days.length; week++) {
+        for (int day = 0; day < days[week].length; day++) {
           int x = cellwidth * day;
           int y = cellheight * week;
           if( day == dayHovered && week == monthHovered ) {
             g.setColor(COLOR_HOVER);
-            g.fillRect(x, y, cellwidth, cellheight);
-            g.setColor(Color.black);
+          } else {
+            g.setColor(COLOR_CALENDAR);
           }
+          g.fillRect(x, y, cellwidth, cellheight);
+          g.setColor(Color.black);
           g.drawRect(x, y, cellwidth, cellheight);
           if (days[week][day].getOfficialDate() != 0) {
             g.drawString(days[week][day].getOfficialDate() + " " + days[week][day].getName(), x + 3, y + fontsize + 2);
@@ -642,13 +652,21 @@ public class Driver {
     absorbTextFields();
     PrintWriter fileOut;
     try {
-      fileOut = new PrintWriter(new FileWriter("Mohr_" + month1 + "-" + month2 + "_Schedule.html" , false));
+      String fileName = "Mohr_" + month1 + "-" + month2 + "_Schedule.html";
+      if( month2 == null ) {
+        fileName = "Mohr_" + month1 + "_Schedule.html";
+      }
+      fileOut = new PrintWriter(new FileWriter(fileName, false));
 
       //filename = 'Mohr_' + month[0:3] + '_' + month2[0:3] + '_' + yearstr + '_Schedule.html'
       
       fileOut.print("<html>\n");
       fileOut.print("<head>\n");
-      fileOut.print("<title>" + month1 + "/" + month2 + " " + year1);
+      String monthHeader = "<title>" + month1 + "/" + month2 + " " + year1;
+      if( month2 == null ) {
+        monthHeader = "<title>" + month1 + " " + year1;
+      }
+      fileOut.print(monthHeader);
       if( year2 != 0 ) {
         fileOut.print("/" + (year2-2000) + "</title>\n");
       }
@@ -667,7 +685,11 @@ public class Driver {
       fileOut.print("\n<body>\n");
 
       fileOut.print("<h2>Yard Duty Schedule</h2>\n");
-      fileOut.print("<h2>" + month1 + "/" + month2 + " " + year1);
+      monthHeader = "<h2>" + month1 + "/" + month2 + " " + year1;
+      if( month2 == null ) {
+        monthHeader = "<h2>" + month1 + " " + year1;
+      }
+      fileOut.print(monthHeader);
       if( year2 != year1 ) {
         fileOut.print("/" + (year2-2000) + "</h2>\n");
       }
@@ -680,8 +702,8 @@ public class Driver {
 
       fileOut.print("<tr>\n");
       String lastprinted = "";
-      for( int week = 0; week < 5; week++ ) {
-        for( int day = 0; day < 5; day++ ) {
+      for( int week = 0; week < days.length; week++ ) {
+        for( int day = 0; day < days[week].length; day++ ) {
           fileOut.print("<td>\n");
           fileOut.print( days[week][day].getOfficialDate() + " " ) ;
           if( !lastprinted.equals(days[week][day].getMonth()) ) {
@@ -692,12 +714,6 @@ public class Driver {
           if( days[week][day].isHoliday() ) {
             fileOut.print("<ul>\n");
             fileOut.print(days[week][day].getText());
-//            for( int a = 1; a < 5; a++ ) {
-//              fileOut.print("<li>");
-//              if( a == 0 )
-//                fileOut.print(days[week][day].getText());
-//              fileOut.print("</li>\n");
-//            }
             fileOut.print("</ul>\n");
           }
           else {
