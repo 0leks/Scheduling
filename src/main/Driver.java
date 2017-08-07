@@ -32,8 +32,10 @@ import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTextArea;
@@ -116,6 +118,7 @@ public class Driver {
         days[weekpressed][daypressed].toggleHoliday();
         if (days[weekpressed][daypressed].isHoliday()) {
           JTextField field = viewPanel.addHolidayField(weekpressed, daypressed, holidayNames.getText());
+          field.setHorizontalAlignment(JTextField.CENTER);
           field.setBackground(COLOR_TEXTFIELD);
           days[weekpressed][daypressed].setTextField(field);
           field.selectAll();
@@ -243,38 +246,36 @@ public class Driver {
     employeePanel = new ScrollablePanel();
     employeePanel.setPreferredSize(new Dimension(720, getDrawY(employees.size()) + 10));
     employeePanel.setAutoscrolls(true);
-    employeePanel.addMouseListener(new MouseListener() {
-      @Override
-      public void mouseClicked(MouseEvent arg0) {
-      }
-
-      @Override
-      public void mouseEntered(MouseEvent arg0) {
-      }
-
-      @Override
-      public void mouseExited(MouseEvent arg0) {
-      }
-
+    employeePanel.addMouseListener(new MouseAdapter() {
       @Override
       public void mousePressed(MouseEvent e) {
-        System.out.println(e.getY());
         int indexClicked = e.getY() / getEmployeeRowHeight();
         if (employees.size() > indexClicked) {
-          System.out.println("Clicked on index:" + indexClicked);
           int dayClicked = e.getX() / 100 - 2;
           if (dayClicked >= 0 && dayClicked < 5) {
-            System.out.println("Clicked on day:" + dayClicked);
             Employee emp = employees.get(indexClicked);
             emp.toggleAvailable(dayClicked);
             Preferences.writeEmployees(employees);
             frame.repaint();
           }
+          else if( dayClicked == -1 || dayClicked == -2 ) {
+            if( e.getButton() == MouseEvent.BUTTON3 ) {
+              JPopupMenu rightClickMenu = new JPopupMenu();
+              JMenuItem delete = new JMenuItem("Remove Employee");
+              rightClickMenu.add(delete);
+              delete.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                  employees.remove(indexClicked);
+                  frame.repaint();
+                }
+              });
+              JMenuItem cancel = new JMenuItem("Cancel");
+              rightClickMenu.add(cancel);
+              rightClickMenu.show(e.getComponent(), e.getX(), e.getY());
+            }
+          }
         }
-      }
-
-      @Override
-      public void mouseReleased(MouseEvent arg0) {
       }
     });
     employeePane = new JScrollPane(employeePanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
@@ -375,19 +376,14 @@ public class Driver {
         return visibleRect.height - 1;
       }
     }
-
     @Override
     public boolean getScrollableTracksViewportHeight() {
-      // TODO Auto-generated method stub
       return false;
     }
-
     @Override
     public boolean getScrollableTracksViewportWidth() {
-      // TODO Auto-generated method stub
       return false;
     }
-
     @Override
     public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) {
       // Get the current position.
