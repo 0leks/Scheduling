@@ -17,10 +17,12 @@ import java.awt.event.MouseMotionAdapter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -83,6 +85,13 @@ public class Driver {
     mediumFont = new Font("Nyala", Font.PLAIN, 20);
     // Set up the frame
     frame = new SchedulingFrame();
+
+    URL iconURL = getClass().getResource("icon.png");
+    if( iconURL != null ) {
+      ImageIcon icon = new ImageIcon(iconURL);
+      frame.setIconImage(icon.getImage());
+    }
+    System.err.println(iconURL);
     frame.setLayout(new BorderLayout());
 
     // Set up the Main Panel
