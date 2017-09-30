@@ -55,6 +55,7 @@ public class Driver {
   //private JComboBox months;
   private JPanel timeframe;
   private JButton create;
+  private JButton save;
   private JButton editEmployees;
   private JButton editHolidays;
   private JTextField holidayNames;
@@ -115,21 +116,37 @@ public class Driver {
         int daypressed = e.getX() / viewPanel.getCellWidth();
         int weekpressed = e.getY() / viewPanel.getCellHeight();
         if( weekpressed >= 0 && weekpressed < days.length ) {
-          days[weekpressed][daypressed].toggleHoliday();
-          if (days[weekpressed][daypressed].isHoliday()) {
-            JTextField field = viewPanel.addHolidayField(weekpressed, daypressed, holidayNames.getText());
-            field.setHorizontalAlignment(JTextField.CENTER);
-            field.setBackground(COLOR_TEXTFIELD);
-            days[weekpressed][daypressed].setTextField(field);
-            field.selectAll();
-            field.requestFocus();
-          } else {
-            if( days[weekpressed][daypressed].getTextField() != null ) {
-              viewPanel.remove(days[weekpressed][daypressed].getTextField());
+          if( e.getButton() == MouseEvent.BUTTON1 ) {
+            days[weekpressed][daypressed].toggleHoliday();
+            if (days[weekpressed][daypressed].isHoliday()) {
+              JTextField field = viewPanel.addHolidayField(weekpressed, daypressed, holidayNames.getText());
+              field.setHorizontalAlignment(JTextField.CENTER);
+              field.setBackground(COLOR_TEXTFIELD);
+              days[weekpressed][daypressed].setTextField(field);
+              field.selectAll();
+              field.requestFocus();
+            } else {
+              if( days[weekpressed][daypressed].getTextField() != null ) {
+                viewPanel.remove(days[weekpressed][daypressed].getTextField());
+              }
+              days[weekpressed][daypressed].setTextField(null);
             }
-            days[weekpressed][daypressed].setTextField(null);
+            frame.repaint();
           }
-          frame.repaint();
+          else if( e.getButton() == MouseEvent.BUTTON3 ) {
+            EditDayPanel editPanel = new EditDayPanel(days[weekpressed][daypressed]);
+            Object[] options = {"Confirm", "Cancel" };
+            int choice = JOptionPane.showOptionDialog(frame, editPanel, "Edit Day", JOptionPane.YES_NO_OPTION,
+                JOptionPane.INFORMATION_MESSAGE, null, options, null);
+            if( choice == 0 ) {
+              String[] newAssignments = editPanel.getAssignments();
+              days[weekpressed][daypressed].clearAssignments();
+              for( int i = 0; i < editPanel.names.length; i++ ) {
+                days[weekpressed][daypressed].assign(new Employee(newAssignments[i]));
+              }
+              frame.repaint();
+            }
+          }
         }
       }
     });
@@ -219,11 +236,19 @@ public class Driver {
         if( days != null ) {
           days = newDays;
         }
-        writeToFile();
         frame.repaint();
       }
     });
     buttonPanel.add(create);
+    save = new JButton("Save");
+    save.setFont(mainFont);
+    save.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        writeToFile();
+      }
+    });
+    buttonPanel.add(save);
     
     holidayNames = new JTextField("Holiday");
     holidayNames.setPreferredSize(new Dimension(200, 40));
@@ -744,6 +769,7 @@ public class Driver {
       fileOut.print("</body>\n");
       fileOut.print("</html>\n");
       fileOut.close();
+      JOptionPane.showMessageDialog(frame, "Saved " + fileName);
     } catch (IOException e1) {
       // TODO Auto-generated catch block
       e1.printStackTrace();
@@ -760,5 +786,32 @@ public class Driver {
   public static void main(String[] args) {
     //new TestAssignment(null);
     new Driver();
+  }
+  public class EditDayPanel extends JPanel {
+    private Day day;
+    private JTextField[] names;
+    public EditDayPanel(Day day) {
+      this.day = day;
+      names = new JTextField[5];
+      List<Employee> assigned = day.getAssignments();
+      this.setPreferredSize(new Dimension(200, 180));
+      for( int i = 0; i < 5; i++ ) {
+        String name = "";
+        if( assigned != null && i < assigned.size() ) {
+          name = assigned.get(i).getName();
+        }
+        names[i] = new JTextField(name);
+        names[i].setPreferredSize(new Dimension(200, 30));
+        this.add(names[i]);
+      }
+      names[0].requestFocusInWindow();
+    }
+    public String[] getAssignments() {
+      String[] assignments = new String[names.length];
+      for( int i = 0; i < names.length; i++ ) {
+        assignments[i] = names[i].getText();
+      }
+      return assignments;
+    }
   }
 }
