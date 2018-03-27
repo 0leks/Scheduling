@@ -20,10 +20,10 @@ public class Assigner {
       for( int day = 0; day < result[0].length; day++ ) {
         days[week][day].clearAssignments();
         for( int position = 0; position < result[0][day].length; position++ ) {
-          if( !days[week][day].isHoliday() ) {
+//          if( !days[week][day].isHoliday()) {
             //days[week][day].assign(result[week][day][position].getAssignment());
             days[week][day].assign(result[0][day][(position + week*3 )%result[0][day].length].getAssignment());
-          }
+//          }
         }
       }
     }

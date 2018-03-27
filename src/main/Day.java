@@ -12,6 +12,7 @@ public class Day {
   private boolean blank;
   
   private boolean holiday;
+  private boolean unused;
   
   private JTextField field;
   
@@ -79,9 +80,15 @@ public class Day {
   public void toggleHoliday() {
     holiday = !holiday;
   }
+  public boolean isUnused() {
+    return unused; 
+  }
+  public void setUnused(boolean state) {
+    unused = state;
+  }
   
   public boolean isHoliday() {
-    return holiday;
+    return unused || holiday;
   }
   
   public boolean isBlank() {
@@ -120,7 +127,7 @@ public class Day {
   public static String getNameofMonth(int monthofyear) {
     String[] monthStrings = new String[] { "January", "February", "March", "April", "May", "June", "July", "August",
     "September", "October", "November", "December" };
-    return monthStrings[monthofyear];
+    return monthStrings[monthofyear%monthStrings.length];
   }
   public Day() {
     blank = true;

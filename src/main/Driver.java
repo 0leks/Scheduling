@@ -67,15 +67,13 @@ public class Driver {
   private JScrollPane employeePane;
 
   private Day[][] days;
-  private String month1;
-  private String month2;
-  private int year1;
-  private int year2;
+  private int monthNumber;
+  private String monthName;
+  private int year;
 
   private List<Employee> employees;
 
-  private int weekOffset = 0;
-  private int numWeeks = 5;
+  private int monthOffset = 0;
   
   public Driver() {
 
@@ -170,18 +168,18 @@ public class Driver {
 //    });
 //    buttonPanel.add(months);
     
-    JComboBox<String> weekSelector = new JComboBox<String>(new String[] { "1 week", "2 weeks", "3 weeks", "4 weeks", "5 weeks"});
-    weekSelector.setSelectedIndex(4);
-    weekSelector.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        numWeeks = weekSelector.getSelectedIndex() + 1;
-        setUpCalendar();
-        frame.repaint();
-      }
-    });
-    weekSelector.setFont(mediumFont);
-    buttonPanel.add(weekSelector);
+//    JComboBox<String> weekSelector = new JComboBox<String>(new String[] { "1 week", "2 weeks", "3 weeks", "4 weeks", "5 weeks"});
+//    weekSelector.setSelectedIndex(4);
+//    weekSelector.addActionListener(new ActionListener() {
+//      @Override
+//      public void actionPerformed(ActionEvent e) {
+//        numWeeks = weekSelector.getSelectedIndex() + 1;
+//        setUpCalendar();
+//        frame.repaint();
+//      }
+//    });
+//    weekSelector.setFont(mediumFont);
+//    buttonPanel.add(weekSelector);
     
     timeframe = new JPanel();
     JButton leftShift = new JButton("<<<");
@@ -192,7 +190,7 @@ public class Driver {
       @Override
       public void actionPerformed(ActionEvent e) {
         applyHolidays();
-        weekOffset -= 1;
+        monthOffset -= 1;
         setUpCalendar();
         frame.repaint();
       }
@@ -201,7 +199,7 @@ public class Driver {
       @Override
       public void actionPerformed(ActionEvent e) {
         applyHolidays();
-        weekOffset += 1;
+        monthOffset += 1;
         setUpCalendar();
         frame.repaint();
       }
@@ -476,73 +474,181 @@ public class Driver {
     }
   }
   public void setUpCalendar() {
-    Day[][] olddays = days;
-    days = new Day[numWeeks][5]; // TODO
-    month1 = null;
-    month2 = null;
-    year1 = 0;
-    year2 = 0;
+    int maxNumberWeeks = 5;
+    days = new Day[maxNumberWeeks][5]; // TODO
+    monthName = null;
+    monthNumber = 0;
+    year = 0;
 
     Calendar cal = Calendar.getInstance();
-    int dayofweek = cal.get(Calendar.DAY_OF_WEEK);
-    int weekofyear = cal.get(Calendar.WEEK_OF_YEAR);
-    cal.set(Calendar.WEEK_OF_YEAR, weekofyear + weekOffset);
-    while( dayofweek != 2 ) {
+    
+    cal.set( Calendar.MONTH, cal.get(Calendar.MONTH) + 1 + monthOffset );
+    
+    monthNumber = cal.get(Calendar.MONTH);
+    monthName = Day.getNameofMonth(monthNumber);
+    year = cal.get(Calendar.YEAR);
+    
+    cal.set( Calendar.DAY_OF_MONTH, 1);
+    while( cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY || cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY ) {
       cal.set(Calendar.DAY_OF_YEAR, cal.get(Calendar.DAY_OF_YEAR)+1);
-      dayofweek = cal.get(Calendar.DAY_OF_WEEK);
+    }
+    while( cal.get(Calendar.DAY_OF_WEEK) != Calendar.MONDAY ) {
+      cal.set(Calendar.DAY_OF_YEAR, cal.get(Calendar.DAY_OF_YEAR)-1);
     }
     
-    weekofyear = cal.get(Calendar.WEEK_OF_YEAR);
-    
+    int numWeeks = 0;
     for (int week = 0; week < days.length; week++) {
+      int currentMonth = cal.get(Calendar.MONTH);
+      boolean added = false;
+      if( currentMonth == monthNumber ) {
+        numWeeks++;
+        added = true;
+      }
       for (int day = 0; day < days[week].length; day++) {
-        int date = cal.get(Calendar.DAY_OF_MONTH);
-        int dayofyear = cal.get(Calendar.DAY_OF_YEAR);
-        Day exists = null;
-        if( olddays != null && week < olddays.length && day < olddays[week].length ) {
-          exists = getDaybyID(olddays, dayofyear);
-        }
+        int currentDayOfYear = cal.get(Calendar.DAY_OF_YEAR);
+        int currentDayOfMonth = cal.get(Calendar.DAY_OF_MONTH);
+        int currentDayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
+        currentMonth = cal.get(Calendar.MONTH);
+        int currentYear = cal.get(Calendar.YEAR);
         
-        String nameofmonth =  Day.getNameofMonth(cal.get(Calendar.MONTH));
-        if( month1 == null ) {
-          month1 = nameofmonth;
+        Day newDay = new Day(currentDayOfWeek-2, currentDayOfMonth, currentDayOfYear);
+        newDay.setMonth(currentMonth);
+        newDay.setYear(currentYear);
+        if( currentMonth != monthNumber ) {
+          newDay.setUnused(true);
         }
-        else if( !month1.equals(nameofmonth) ) {
-          month2 = nameofmonth;
-        }
-        
-        int year = cal.get(Calendar.YEAR);
-        if( year1 == 0 ) {
-          year1 = year;
-        }
-        else {
-          year2 = year;
-        }
-        
-        if( exists == null ) {
-          Day newDay = new Day(dayofweek-2, date, dayofyear );
-          newDay.setMonth(cal.get(Calendar.MONTH));
-          newDay.setYear(year);
-          days[week][day] = newDay;
-        }
-        else {
-//          JTextField field = exists.getTextField();
-//          if( field != null ) {
-//            exists.absorbTextField();
-//            viewPanel.remove(field);
-//          }
-          days[week][day] = exists;
-          days[week][day].clearAssignments();
-        }
+        days[week][day] = newDay;
         
         cal.set(Calendar.DAY_OF_YEAR, cal.get(Calendar.DAY_OF_YEAR)+1);
-        dayofweek = cal.get(Calendar.DAY_OF_WEEK);
-        while( dayofweek == 1 || dayofweek == 7 ) {
+        while( cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY || cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY ) {
           cal.set(Calendar.DAY_OF_YEAR, cal.get(Calendar.DAY_OF_YEAR)+1);
-          dayofweek = cal.get(Calendar.DAY_OF_WEEK);
         }
       }
+      if( currentMonth == monthNumber && !added) {
+        numWeeks++;
+      }
     }
+    
+    Day[][] newDays = new Day[numWeeks][5];
+    for(int week = 0; week < newDays.length; week++ ) {
+      for( int day = 0; day < newDays[week].length; day++ ) {
+        newDays[week][day] = days[week][day];
+      }
+    }
+    days = newDays;
+    
+    
+    
+//    
+//    
+//    int currentMonth = cal.get(Calendar.MONTH);
+//    int targetMonth = currentMonth+1;
+//    String nameOfTargetMonth = Day.getNameofMonth(targetMonth);
+//    
+//    while( cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY || cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY) {
+//      cal.set(Calendar.DAY_OF_YEAR, cal.get(Calendar.DAY_OF_YEAR)+1);
+//    }
+//    int startDay = cal.get(Calendar.DAY_OF_YEAR);
+//
+//    for (int week = 0; week < days.length; week++) {
+//      for (int day = 0; day < days[week].length; day++) {
+//        int date = cal.get(Calendar.DAY_OF_MONTH);
+//        int dayofyear = cal.get(Calendar.DAY_OF_YEAR);
+//        Day exists = null;
+//        String nameofmonth =  Day.getNameofMonth(cal.get(Calendar.MONTH));
+//        int year = cal.get(Calendar.YEAR);
+//        
+//        if( exists == null ) {
+//          Day newDay = new Day(dayofweek-2, date, dayofyear );
+//          newDay.setMonth(cal.get(Calendar.MONTH));
+//          newDay.setYear(year);
+//          days[week][day] = newDay;
+//        }
+//        else {
+////          JTextField field = exists.getTextField();
+////          if( field != null ) {
+////            exists.absorbTextField();
+////            viewPanel.remove(field);
+////          }
+//          days[week][day] = exists;
+//          days[week][day].clearAssignments();
+//        }
+//        
+//        cal.set(Calendar.DAY_OF_YEAR, cal.get(Calendar.DAY_OF_YEAR)+1);
+//        dayofweek = cal.get(Calendar.DAY_OF_WEEK);
+//        while( dayofweek == 1 || dayofweek == 7 ) {
+//          cal.set(Calendar.DAY_OF_YEAR, cal.get(Calendar.DAY_OF_YEAR)+1);
+//          dayofweek = cal.get(Calendar.DAY_OF_WEEK);
+//        }
+//      }
+//    }
+//    
+//    
+//    
+//    
+//    
+//    
+//    
+//    
+//    int dayofweek = cal.get(Calendar.DAY_OF_WEEK);
+//    int weekofyear = cal.get(Calendar.WEEK_OF_YEAR);
+//    cal.set(Calendar.WEEK_OF_YEAR, weekofyear + weekOffset);
+//    while( dayofweek != 2 ) {
+//      cal.set(Calendar.DAY_OF_YEAR, cal.get(Calendar.DAY_OF_YEAR)+1);
+//      dayofweek = cal.get(Calendar.DAY_OF_WEEK);
+//    }
+//    
+//    weekofyear = cal.get(Calendar.WEEK_OF_YEAR);
+//    
+//    for (int week = 0; week < days.length; week++) {
+//      for (int day = 0; day < days[week].length; day++) {
+//        int date = cal.get(Calendar.DAY_OF_MONTH);
+//        int dayofyear = cal.get(Calendar.DAY_OF_YEAR);
+//        Day exists = null;
+//        if( olddays != null && week < olddays.length && day < olddays[week].length ) {
+//          exists = getDaybyID(olddays, dayofyear);
+//        }
+//        
+//        String nameofmonth =  Day.getNameofMonth(cal.get(Calendar.MONTH));
+//        if( month1 == null ) {
+//          month1 = nameofmonth;
+//        }
+//        else if( !month1.equals(nameofmonth) ) {
+//          month2 = nameofmonth;
+//        }
+//        
+//        int year = cal.get(Calendar.YEAR);
+//        if( year1 == 0 ) {
+//          year1 = year;
+//        }
+//        else {
+//          year2 = year;
+//        }
+//        
+//        if( exists == null ) {
+//          Day newDay = new Day(dayofweek-2, date, dayofyear );
+//          newDay.setMonth(cal.get(Calendar.MONTH));
+//          newDay.setYear(year);
+//          days[week][day] = newDay;
+//        }
+//        else {
+////          JTextField field = exists.getTextField();
+////          if( field != null ) {
+////            exists.absorbTextField();
+////            viewPanel.remove(field);
+////          }
+//          days[week][day] = exists;
+//          days[week][day].clearAssignments();
+//        }
+//        
+//        cal.set(Calendar.DAY_OF_YEAR, cal.get(Calendar.DAY_OF_YEAR)+1);
+//        dayofweek = cal.get(Calendar.DAY_OF_WEEK);
+//        while( dayofweek == 1 || dayofweek == 7 ) {
+//          cal.set(Calendar.DAY_OF_YEAR, cal.get(Calendar.DAY_OF_YEAR)+1);
+//          dayofweek = cal.get(Calendar.DAY_OF_WEEK);
+//        }
+//      }
+//    }
   }
   
   public void absorbTextFields() {
@@ -667,6 +773,9 @@ public class Driver {
       g.setColor(Color.black);
       for (int week = 0; week < days.length; week++) {
         for (int day = 0; day < days[week].length; day++) {
+//          if( days[week][day].isUnclickable() ) {
+//            continue;
+//          }
           int x = cellwidth * day;
           int y = cellheight * week;
           if( day == dayHovered && week == monthHovered ) {
@@ -686,6 +795,7 @@ public class Driver {
               g.drawString(days[week][day].getText(), x + 3, y + 2 * fontsize + 8);
               g.setFont(tinyFont);
             }
+            else 
             if( days[week][day].hasAssignments() ) {
               for( int index = 0; index < days[week][day].getAssignments().size(); index++ ) {
                 g.setFont(tinyFont);
@@ -704,27 +814,16 @@ public class Driver {
     absorbTextFields();
     PrintWriter fileOut;
     try {
-      String fileName = "Mohr_" + month1 + "-" + month2 + "_Schedule.html";
-      if( month2 == null ) {
-        fileName = "Mohr_" + month1 + "_Schedule.html";
-      }
+      String fileName = "Mohr_" + monthName + "_Schedule.html";
       fileOut = new PrintWriter(new FileWriter(fileName, false));
 
       //filename = 'Mohr_' + month[0:3] + '_' + month2[0:3] + '_' + yearstr + '_Schedule.html'
       
       fileOut.print("<html>\n");
       fileOut.print("<head>\n");
-      String monthHeader = "<title>" + month1 + "/" + month2 + " " + year1;
-      if( month2 == null ) {
-        monthHeader = "<title>" + month1 + " " + year1;
-      }
+      String monthHeader = "<title>" + monthName + " " + year;
       fileOut.print(monthHeader);
-      if( year2 != 0 ) {
-        fileOut.print("/" + (year2-2000) + "</title>\n");
-      }
-      else {
-        fileOut.print("</title>\n");
-      }
+      fileOut.print("</title>\n");
       fileOut.print("<style type=\"text/css\">\n");
       fileOut.print("th, td { padding:1px; padding-right: 20px; width: 230px; font-weight: bold;font-size: 18px; vertical-align: top;}\n");
       fileOut.print("td { height: 139px;}\n");
@@ -737,17 +836,9 @@ public class Driver {
       fileOut.print("\n<body>\n");
 
       fileOut.print("<h2>Yard Duty Schedule</h2>\n");
-      monthHeader = "<h2>" + month1 + "/" + month2 + " " + year1;
-      if( month2 == null ) {
-        monthHeader = "<h2>" + month1 + " " + year1;
-      }
+      monthHeader = "<h2>" + monthName + " " + year;
       fileOut.print(monthHeader);
-      if( year2 != year1 ) {
-        fileOut.print("/" + (year2-2000) + "</h2>\n");
-      }
-      else {
-        fileOut.print("</h2>\n");
-      }
+      fileOut.print("</h2>\n");
 
       fileOut.print("<table border=\"1\">\n");
       fileOut.print("<tr><th>Monday</th><th>Tuesday</th><th>Wednesday</th><th>Thursday</th><th>Friday</th></tr>\n");
