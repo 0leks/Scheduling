@@ -9,6 +9,8 @@ import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
@@ -232,6 +234,7 @@ public class Driver {
     create.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent arg0) {
+        System.err.println(days[0].length + " positions");
         Day[][] newDays = (new Assigner().generateSchedule(days, employees));
         if( days != null ) {
           days = newDays;
@@ -239,7 +242,22 @@ public class Driver {
         frame.repaint();
       }
     });
-    buttonPanel.add(create);
+    Integer[] positionsOptions = new Integer[] { 3, 4, 5, 6, 7, 8};
+    JComboBox<Integer> numberPositions = new JComboBox<Integer>(positionsOptions);
+    numberPositions.setFont(mainFont);
+    numberPositions.setToolTipText("Number of positions per day.");
+    numberPositions.setSelectedIndex(3); // 6 positions is default
+    numberPositions.addItemListener(new ItemListener() {
+      @Override
+      public void itemStateChanged(ItemEvent e) {
+        Assigner.NUM_POSITIONS = (Integer)numberPositions.getSelectedItem();
+      }
+    });
+    
+    JPanel generatePanel = new JPanel();
+    generatePanel.add(create);
+    generatePanel.add(numberPositions);
+    buttonPanel.add(generatePanel);
     save = new JButton("Save");
     save.setFont(mainFont);
     save.addActionListener(new ActionListener() {
@@ -792,10 +810,10 @@ public class Driver {
     private JTextField[] names;
     public EditDayPanel(Day day) {
       this.day = day;
-      names = new JTextField[5];
+      names = new JTextField[Assigner.NUM_POSITIONS];
       List<Employee> assigned = day.getAssignments();
-      this.setPreferredSize(new Dimension(200, 180));
-      for( int i = 0; i < 5; i++ ) {
+      this.setPreferredSize(new Dimension(200, 35*Assigner.NUM_POSITIONS)); // 180
+      for( int i = 0; i < names.length; i++ ) {
         String name = "";
         if( assigned != null && i < assigned.size() ) {
           name = assigned.get(i).getName();

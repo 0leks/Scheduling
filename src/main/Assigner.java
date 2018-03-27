@@ -1,13 +1,12 @@
 package main;
 
-import java.util.ArrayList;
 import java.util.List;
-
-import javax.swing.JOptionPane;
 
 public class Assigner {
   
   private static final int NOBODY = -1;
+  
+  public static int NUM_POSITIONS = 6;
 
   public Assigner() {
     
@@ -126,7 +125,10 @@ public class Assigner {
     int numAssigned;
     
     public Node() {
-      assignments = new int[]{NOBODY, NOBODY, NOBODY, NOBODY, NOBODY};
+      assignments = new int[NUM_POSITIONS];
+      for( int i = 0; i < assignments.length; i++ ) {
+        assignments[i] = NOBODY;
+      }
       
       numAssigned = 0;
     }
@@ -137,7 +139,7 @@ public class Assigner {
     }
     
     public void assignAll(int id) {
-      for( numAssigned = 0; numAssigned < 5; numAssigned++ ) {
+      for( numAssigned = 0; numAssigned < NUM_POSITIONS; numAssigned++ ) {
         assignments[numAssigned] = id;
       }
     }

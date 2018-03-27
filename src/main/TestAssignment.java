@@ -8,7 +8,7 @@ public class TestAssignment {
 
   public Variable[][][] generate(List<Employee> employees) {
     
-    Variable[][][] variables = new Variable[1][5][5];
+    Variable[][][] variables = new Variable[1][5][Assigner.NUM_POSITIONS];
     
     for( int week = 0; week < variables.length; week++ ) {
       for( int day = 0; day < variables[week].length; day++ ) {
@@ -109,7 +109,7 @@ public class TestAssignment {
   }
   
   public Edge[] createEdges(Variable[][][] variables) {
-    Edge[] edges = new Edge[variables.length*10];
+    Edge[] edges = new Edge[variables.length*Assigner.NUM_POSITIONS + variables.length*variables[0].length];
     
     for( int week = 0; week < variables.length; week++ ) {
       for( int position = 0; position < variables[week][0].length; position++ ) {
@@ -119,7 +119,7 @@ public class TestAssignment {
           list.add(variables[week][day][position] );
         }
         edge.setVariables(list);
-        edges[week*5 + position] = edge;
+        edges[week*Assigner.NUM_POSITIONS + position] = edge;
       }
     }
     
@@ -131,7 +131,7 @@ public class TestAssignment {
           list.add(variables[week][day][position] );
         }
         edge.setVariables(list);
-        edges[edges.length/2 + week*5 + day] = edge;
+        edges[variables.length*Assigner.NUM_POSITIONS + week*5 + day] = edge;
       }
     }
     return edges;
