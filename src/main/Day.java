@@ -5,6 +5,8 @@ import java.util.List;
 
 import javax.swing.JTextField;
 
+import main.Driver.ViewPanel.HolidayField;
+
 public class Day {
 
   private String name;
@@ -14,7 +16,7 @@ public class Day {
   private boolean holiday;
   private boolean unused;
   
-  private JTextField field;
+  private HolidayField field;
   
   private int officialDate;
   private int id;
@@ -63,18 +65,22 @@ public class Day {
     assignments.add(e);
   }
   
+  public void removeTextField() {
+    if( field != null ) {
+      field.remove();
+    }
+  }
   public void absorbTextField() {
     if( field != null ) {
-      text = field.getText();
-      field = null;
+      field.applyAndRemove();
     }
   }
   
-  public JTextField getTextField() {
+  public HolidayField getHolidayField() {
     return field;
   }
   
-  public void setTextField(JTextField field) {
+  public void setHolidayField(HolidayField field) {
     this.field = field;
   }
   public void toggleHoliday() {
@@ -88,7 +94,7 @@ public class Day {
   }
   
   public boolean isHoliday() {
-    return unused || holiday;
+    return holiday;
   }
   
   public boolean isBlank() {

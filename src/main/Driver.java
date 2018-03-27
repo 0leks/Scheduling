@@ -9,6 +9,8 @@ import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
@@ -37,6 +39,8 @@ import javax.swing.JTextField;
 import javax.swing.Scrollable;
 import javax.swing.SwingConstants;
 
+import main.Driver.ViewPanel.HolidayField;
+
 public class Driver {
 
   public static final Color COLOR_CALENDAR = new Color(255, 255, 255);
@@ -60,7 +64,8 @@ public class Driver {
   private JButton save;
   private JButton editEmployees;
   private JButton editHolidays;
-  private JTextField holidayNames;
+//  private JTextField holidayNames;
+  private String previousHolidayName = "Holiday";
 
   private JPanel employeePanel;
   private JPanel editPanel;
@@ -119,17 +124,20 @@ public class Driver {
           if( e.getButton() == MouseEvent.BUTTON1 ) {
             days[weekpressed][daypressed].toggleHoliday();
             if (days[weekpressed][daypressed].isHoliday()) {
-              JTextField field = viewPanel.addHolidayField(weekpressed, daypressed, holidayNames.getText());
+              applyHolidays();
+              days[weekpressed][daypressed].setText("");
+              HolidayField field = viewPanel.addHolidayField(weekpressed, daypressed, previousHolidayName);
               field.setHorizontalAlignment(JTextField.CENTER);
               field.setBackground(COLOR_TEXTFIELD);
-              days[weekpressed][daypressed].setTextField(field);
+              days[weekpressed][daypressed].setHolidayField(field);
               field.selectAll();
               field.requestFocus();
             } else {
-              if( days[weekpressed][daypressed].getTextField() != null ) {
-                viewPanel.remove(days[weekpressed][daypressed].getTextField());
-              }
-              days[weekpressed][daypressed].setTextField(null);
+              days[weekpressed][daypressed].removeTextField();
+//              if( days[weekpressed][daypressed].getHolidayField() != null ) {
+//                viewPanel.remove(days[weekpressed][daypressed].getTextField());
+//              }
+//              days[weekpressed][daypressed].setHolidayField(null);
             }
             frame.repaint();
           }
@@ -233,6 +241,7 @@ public class Driver {
       @Override
       public void actionPerformed(ActionEvent arg0) {
         System.err.println(days[0].length + " positions");
+        applyHolidays();
         Day[][] newDays = (new Assigner().generateSchedule(days, employees));
         if( days != null ) {
           days = newDays;
@@ -266,11 +275,11 @@ public class Driver {
     });
     buttonPanel.add(save);
     
-    holidayNames = new JTextField("Holiday");
-    holidayNames.setPreferredSize(new Dimension(200, 40));
-    holidayNames.setFont(mediumFont);
-    holidayNames.setHorizontalAlignment(JTextField.CENTER);
-    buttonPanel.add(holidayNames);
+//    holidayNames = new JTextField("Holiday");
+//    holidayNames.setPreferredSize(new Dimension(200, 40));
+//    holidayNames.setFont(mediumFont);
+//    holidayNames.setHorizontalAlignment(JTextField.CENTER);
+//    buttonPanel.add(holidayNames);
 
     frame.add(mainPanel, BorderLayout.CENTER);
     frame.setSize(1500, 940);
@@ -465,11 +474,12 @@ public class Driver {
   public void applyHolidays() {
     for (int week = 0; week < days.length; week++) {
       for (int day = 0; day < days[week].length; day++) {
-        JTextField field = days[week][day].getTextField();
-        if( field != null ) {
-          days[week][day].absorbTextField();
-          viewPanel.remove(field);
-        }
+        days[week][day].absorbTextField();
+//        JTextField field = days[week][day].getTextField();
+//        if( field != null ) {
+//          days[week][day].absorbTextField();
+//          viewPanel.remove(field);
+//        }
       }
     }
   }
@@ -536,132 +546,8 @@ public class Driver {
       }
     }
     days = newDays;
-    
-    
-    
-//    
-//    
-//    int currentMonth = cal.get(Calendar.MONTH);
-//    int targetMonth = currentMonth+1;
-//    String nameOfTargetMonth = Day.getNameofMonth(targetMonth);
-//    
-//    while( cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY || cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY) {
-//      cal.set(Calendar.DAY_OF_YEAR, cal.get(Calendar.DAY_OF_YEAR)+1);
-//    }
-//    int startDay = cal.get(Calendar.DAY_OF_YEAR);
-//
-//    for (int week = 0; week < days.length; week++) {
-//      for (int day = 0; day < days[week].length; day++) {
-//        int date = cal.get(Calendar.DAY_OF_MONTH);
-//        int dayofyear = cal.get(Calendar.DAY_OF_YEAR);
-//        Day exists = null;
-//        String nameofmonth =  Day.getNameofMonth(cal.get(Calendar.MONTH));
-//        int year = cal.get(Calendar.YEAR);
-//        
-//        if( exists == null ) {
-//          Day newDay = new Day(dayofweek-2, date, dayofyear );
-//          newDay.setMonth(cal.get(Calendar.MONTH));
-//          newDay.setYear(year);
-//          days[week][day] = newDay;
-//        }
-//        else {
-////          JTextField field = exists.getTextField();
-////          if( field != null ) {
-////            exists.absorbTextField();
-////            viewPanel.remove(field);
-////          }
-//          days[week][day] = exists;
-//          days[week][day].clearAssignments();
-//        }
-//        
-//        cal.set(Calendar.DAY_OF_YEAR, cal.get(Calendar.DAY_OF_YEAR)+1);
-//        dayofweek = cal.get(Calendar.DAY_OF_WEEK);
-//        while( dayofweek == 1 || dayofweek == 7 ) {
-//          cal.set(Calendar.DAY_OF_YEAR, cal.get(Calendar.DAY_OF_YEAR)+1);
-//          dayofweek = cal.get(Calendar.DAY_OF_WEEK);
-//        }
-//      }
-//    }
-//    
-//    
-//    
-//    
-//    
-//    
-//    
-//    
-//    int dayofweek = cal.get(Calendar.DAY_OF_WEEK);
-//    int weekofyear = cal.get(Calendar.WEEK_OF_YEAR);
-//    cal.set(Calendar.WEEK_OF_YEAR, weekofyear + weekOffset);
-//    while( dayofweek != 2 ) {
-//      cal.set(Calendar.DAY_OF_YEAR, cal.get(Calendar.DAY_OF_YEAR)+1);
-//      dayofweek = cal.get(Calendar.DAY_OF_WEEK);
-//    }
-//    
-//    weekofyear = cal.get(Calendar.WEEK_OF_YEAR);
-//    
-//    for (int week = 0; week < days.length; week++) {
-//      for (int day = 0; day < days[week].length; day++) {
-//        int date = cal.get(Calendar.DAY_OF_MONTH);
-//        int dayofyear = cal.get(Calendar.DAY_OF_YEAR);
-//        Day exists = null;
-//        if( olddays != null && week < olddays.length && day < olddays[week].length ) {
-//          exists = getDaybyID(olddays, dayofyear);
-//        }
-//        
-//        String nameofmonth =  Day.getNameofMonth(cal.get(Calendar.MONTH));
-//        if( month1 == null ) {
-//          month1 = nameofmonth;
-//        }
-//        else if( !month1.equals(nameofmonth) ) {
-//          month2 = nameofmonth;
-//        }
-//        
-//        int year = cal.get(Calendar.YEAR);
-//        if( year1 == 0 ) {
-//          year1 = year;
-//        }
-//        else {
-//          year2 = year;
-//        }
-//        
-//        if( exists == null ) {
-//          Day newDay = new Day(dayofweek-2, date, dayofyear );
-//          newDay.setMonth(cal.get(Calendar.MONTH));
-//          newDay.setYear(year);
-//          days[week][day] = newDay;
-//        }
-//        else {
-////          JTextField field = exists.getTextField();
-////          if( field != null ) {
-////            exists.absorbTextField();
-////            viewPanel.remove(field);
-////          }
-//          days[week][day] = exists;
-//          days[week][day].clearAssignments();
-//        }
-//        
-//        cal.set(Calendar.DAY_OF_YEAR, cal.get(Calendar.DAY_OF_YEAR)+1);
-//        dayofweek = cal.get(Calendar.DAY_OF_WEEK);
-//        while( dayofweek == 1 || dayofweek == 7 ) {
-//          cal.set(Calendar.DAY_OF_YEAR, cal.get(Calendar.DAY_OF_YEAR)+1);
-//          dayofweek = cal.get(Calendar.DAY_OF_WEEK);
-//        }
-//      }
-//    }
   }
   
-  public void absorbTextFields() {
-    for (int week = 0; week < days.length; week++) {
-      for (int day = 0; day < days[week].length; day++) {
-        JTextField field = days[week][day].getTextField();
-        if( field != null ) {
-          days[week][day].absorbTextField();
-          viewPanel.remove(field);
-        }
-      }
-    }
-  }
   public Day getDaybyID(Day[][] cal, int id) {
     if( cal == null ) {
       return null;
@@ -709,36 +595,52 @@ public class Driver {
         }
       });
     }
-    public JTextField addHolidayField(int week, int day, String holidayName) {
+    public HolidayField addHolidayField(int week, int day, String holidayName) {
 
-      JTextField field = new JTextField(holidayName);
+      HolidayField field = new HolidayField(holidayName, days[week][day]);
       field.setFont(mediumFont);
       this.add(field);
       field.setBounds(day * getCellWidth() + 2, week * getCellHeight() + mediumFont.getSize() + 6, getCellWidth() - 4,
           mediumFont.getSize() + 8);
-      field.addKeyListener(new TextFieldListener(field, days[week][day]));
+      field.addKeyListener(field);
+      field.addFocusListener(field);
       return field;
     }
 
-    public class TextFieldListener implements KeyListener {
+    public class HolidayField extends JTextField implements KeyListener, FocusListener {
 
-      private JTextField field;
+      private boolean removed;
       private Day day;
 
-      public TextFieldListener(JTextField comp, Day day) {
-        field = comp;
+      public HolidayField(String text, Day day) {
+        super(text);
         this.day = day;
+      }
+      public void remove() {
+        if (!removed) {
+          day.setHolidayField(null);
+          ViewPanel.this.remove(this);
+          removed = true;
+          frame.repaint();
+        }
+      }
+      public void apply() {
+        if (!removed) {
+          String text = getText();
+          day.setText(text);
+          previousHolidayName = text;
+          frame.repaint();
+        }
+      }
+      public void applyAndRemove() {
+        apply();
+        remove();
       }
 
       @Override
       public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-          if (field != null) {
-            day.setText(field.getText());
-            ViewPanel.this.remove(field);
-            field = null;
-            frame.repaint();
-          }
+          applyAndRemove();
         }
       }
 
@@ -748,6 +650,14 @@ public class Driver {
 
       @Override
       public void keyTyped(KeyEvent arg0) {
+      }
+      @Override
+      public void focusGained(FocusEvent e) {
+        
+      }
+      @Override
+      public void focusLost(FocusEvent e) {
+        applyAndRemove();
       }
     }
 
@@ -796,7 +706,7 @@ public class Driver {
               g.setFont(tinyFont);
             }
             else 
-            if( days[week][day].hasAssignments() ) {
+            if( !days[week][day].isUnused() && days[week][day].hasAssignments() ) {
               for( int index = 0; index < days[week][day].getAssignments().size(); index++ ) {
                 g.setFont(tinyFont);
                 g.drawString(days[week][day].getAssignments().get(index).getName(), x + 3, y + (2+index) * fontsize + 3*index+2);
@@ -811,7 +721,7 @@ public class Driver {
   }
   
   public void writeToFile() {
-    absorbTextFields();
+    applyHolidays();
     PrintWriter fileOut;
     try {
       String fileName = "Mohr_" + monthName + "_Schedule.html";
@@ -859,7 +769,7 @@ public class Driver {
             fileOut.print(days[week][day].getText());
             fileOut.print("</ul>\n");
           }
-          else {
+          else if( !days[week][day].isUnused() ) {
             fileOut.print("<ol>\n");
             for( Employee e : days[week][day].getAssignments() ) {
               fileOut.print("<li>");

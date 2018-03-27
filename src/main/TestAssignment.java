@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
+import javax.swing.JOptionPane;
+
 public class TestAssignment {
 
   public Variable[][][] generate(List<Employee> employees) {
@@ -157,6 +159,8 @@ public class TestAssignment {
       }
     }
     if( unassigned.size() == 0 ) {
+      System.err.println("Error, 0 unassigned employees remaining");
+      JOptionPane.showMessageDialog(null, "Oops, an error occurred. Please Generate again.");
       return null;
     }
     else {
