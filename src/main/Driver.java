@@ -491,14 +491,18 @@ public class Driver {
     year = 0;
 
     Calendar cal = Calendar.getInstance();
+    // set day of month to 1
+    // if current day of month is 31 and next month only has 30 days, 
+    // Calendar will automatically roll over to next month.
+    cal.set( Calendar.DAY_OF_MONTH, 1);
     
-    cal.set( Calendar.MONTH, cal.get(Calendar.MONTH) + 1 + monthOffset );
+    int targetMonth = cal.get(Calendar.MONTH) + 1 + monthOffset;
+    cal.set( Calendar.MONTH, targetMonth );
     
     monthNumber = cal.get(Calendar.MONTH);
     monthName = Day.getNameofMonth(monthNumber);
     year = cal.get(Calendar.YEAR);
     
-    cal.set( Calendar.DAY_OF_MONTH, 1);
     while( cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY || cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY ) {
       cal.set(Calendar.DAY_OF_YEAR, cal.get(Calendar.DAY_OF_YEAR)+1);
     }
