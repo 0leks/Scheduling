@@ -769,7 +769,12 @@ public class Driver {
     applyHolidays();
     PrintWriter fileOut;
     try {
-      String fileName = "Mohr_" + monthName + "_Schedule.html";
+      String fileName = "Mohr_" + monthName + "_Schedule";
+      String chosenFileName = JOptionPane.showInputDialog(frame, "Choose File Name", fileName);
+      if( chosenFileName == null ) {
+        return;
+      }
+      fileName = chosenFileName + ".html";
       fileOut = new PrintWriter(new FileWriter(fileName, false));
 
       //filename = 'Mohr_' + month[0:3] + '_' + month2[0:3] + '_' + yearstr + '_Schedule.html'
