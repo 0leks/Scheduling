@@ -50,11 +50,8 @@ public class Preferences {
   public static void readEmployees(List<Employee> list) {
     initInput();
     int day = 0;
-    Employee e = null;
+    Employee e = new Employee("Temp");
     while(fileIn.hasNext()) {
-      if( day == 0 ) {
-        e = new Employee("Temp");
-      }
       String token = fileIn.next();
       if( token.equals(YES) ) {
         

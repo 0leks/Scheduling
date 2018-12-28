@@ -316,7 +316,11 @@ public class Driver {
         int indexClicked = e.getY() / getEmployeeRowHeight();
         if (employees.size() > indexClicked) {
           int dayClicked = e.getX() / 100 - 2;
-          if (dayClicked >= 0 && dayClicked < 5) {
+          if( e.getX() >= 200 - getLockBoxSize() && e.getX() < 200 && e.getButton() == MouseEvent.BUTTON1 ) {
+            System.err.println("Selected lock chooser");
+            //showLockChooser();
+          }
+          else if (dayClicked >= 0 && dayClicked < 5) {
             Employee emp = employees.get(indexClicked);
             emp.toggleAvailable(dayClicked);
             Preferences.writeEmployees(employees);
@@ -394,8 +398,12 @@ public class Driver {
   public int getEmployeeRowHeight() {
     return mediumFont.getSize() * 2;
   }
+  public int getLockBoxSize() {
+    return mediumFont.getSize() * 2 - 4;
+  }
 
   public class ScrollablePanel extends JPanel implements Scrollable {
+
     @Override
     public void paintComponent(Graphics g) {
       super.paintComponent(g);
@@ -407,6 +415,9 @@ public class Driver {
         g.setFont(mediumFont);
         g.drawString(e.getName(), 10, getDrawY(row) + mediumFont.getSize() + 5);
         g.drawRect(0, getDrawY(row), 200, mediumFont.getSize() * 2);
+        g.setColor(Color.blue);
+        int lockBoxSize = getLockBoxSize();
+        g.drawRect(200 - lockBoxSize - 1, getDrawY(row)+2, lockBoxSize, lockBoxSize);
         for (int day = 0; day < 5; day++) {
           g.setColor(Color.black);
           g.drawRect(200 + day * 100, getDrawY(row), 100, mediumFont.getSize() * 2);

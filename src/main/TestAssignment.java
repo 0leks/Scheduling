@@ -8,6 +8,11 @@ import javax.swing.JOptionPane;
 
 public class TestAssignment {
 
+  
+  public void validateEmployeePreferences(List<Employee> employees) {
+    // asdf
+  }
+  
   public Variable[][][] generate(List<Employee> employees) {
     
     Variable[][][] variables = new Variable[1][5][Assigner.NUM_POSITIONS];
@@ -18,9 +23,19 @@ public class TestAssignment {
           String nameofday = Day.getNameofDay(day);
           Variable var = new Variable(week + ":" + nameofday + ":" + position );
           //var.fillDomain(employees);
+          boolean positionLocked = false;
           for( Employee e : employees ) {
-            if( e.available(day) ) {
+            if(e.isPositionLocked(day)) {
+              positionLocked = true;
               var.addToDomain(e);
+              break;
+            }
+          }
+          if(!positionLocked) {
+            for( Employee e : employees ) {
+              if( e.available(day) ) {
+                var.addToDomain(e);
+              }
             }
           }
           variables[week][day][position] = var;
