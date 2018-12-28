@@ -50,7 +50,37 @@ public class Preferences {
     fileOut.close();
   }
   
+  private static boolean isLockPositionVersion() {
+    initInput();
+    int day = 0;
+    boolean isLockPositionVersion = true;
+    while(fileIn.hasNext()) {
+      String token = fileIn.next();
+      if( token.equals(YES) ) {
+        String nextString = fileIn.next();
+        try {
+          Integer.parseInt(nextString);
+          isLockPositionVersion = true;
+        }
+        catch(NumberFormatException ee) {
+          isLockPositionVersion = false;
+        }
+        break;
+      }
+      day++;
+      if( day == 5 ) {
+        fileIn.nextLine();
+        day = 0;
+      }
+    }
+    closeInput();
+    return isLockPositionVersion;
+  }
+  
   public static void readEmployees(List<Employee> list) {
+    
+    boolean isLockPositionVersion = isLockPositionVersion();
+    
     initInput();
     
     int day = 0;
@@ -62,14 +92,16 @@ public class Preferences {
       String token = fileIn.next();
       if( token.equals(YES) ) {
         // employee constructor sets all days to available by default
-        String lockedString = fileIn.next();
-        try {
-          int lockedPosition = Integer.parseInt(lockedString);
-          e.lockedPosition(day, lockedPosition);
-        }
-        catch(NumberFormatException ee) {
-          ee.printStackTrace();
-          JOptionPane.showMessageDialog(null, "num format error");
+        if( isLockPositionVersion ) {
+          String lockedString = fileIn.next();
+          try {
+            int lockedPosition = Integer.parseInt(lockedString);
+            e.lockedPosition(day, lockedPosition);
+          }
+          catch(NumberFormatException ee) {
+            ee.printStackTrace();
+            JOptionPane.showMessageDialog(null, "num format error");
+          }
         }
       }
       else if( token.equals(NO) ) {
