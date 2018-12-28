@@ -790,7 +790,7 @@ public class Driver {
 
       fileOut.print("\n<body>\n");
 
-      fileOut.print("<h2>Yard Duty Schedule</h2>\n");
+      fileOut.print("<h2>Noon Supervisor Schedule</h2>\n");
       monthHeader = "<h2>" + monthName + " " + year;
       fileOut.print(monthHeader);
       fileOut.print("</h2>\n");
