@@ -315,16 +315,43 @@ public class Driver {
       public void mousePressed(MouseEvent e) {
         int indexClicked = e.getY() / getEmployeeRowHeight();
         if (employees.size() > indexClicked) {
-          int dayClicked = e.getX() / 100 - 2;
-          if( e.getX() >= 200 - getLockBoxSize() && e.getX() < 200 && e.getButton() == MouseEvent.BUTTON1 ) {
-            System.err.println("Selected lock chooser");
-            //showLockChooser();
-          }
-          else if (dayClicked >= 0 && dayClicked < 5) {
+          final int dayClicked = e.getX() / 100 - 2;
+          if (dayClicked >= 0 && dayClicked < 5) {
             Employee emp = employees.get(indexClicked);
-            emp.toggleAvailable(dayClicked);
-            Preferences.writeEmployees(employees);
-            frame.repaint();
+            if( e.getButton() == MouseEvent.BUTTON3 ) {
+              JPopupMenu rightClickMenu = new JPopupMenu();
+              JMenuItem none = new JMenuItem("Any Position");
+              none.addActionListener(event -> {
+                emp.clearLockedPosition(dayClicked);
+                Preferences.writeEmployees(employees);
+                frame.repaint();
+              });
+              rightClickMenu.add(none);
+              for(int position = 0; position < Assigner.NUM_POSITIONS; position++) {
+                JMenuItem lockPos = new JMenuItem("Lock Position " + (position+1));
+                lockPos.setActionCommand("" + position);
+                lockPos.addActionListener(event -> {
+                  try {
+                    int pos = Integer.parseInt(event.getActionCommand());
+                    emp.lockedPosition(dayClicked, pos);
+                  } catch(NumberFormatException error) {
+                    error.printStackTrace();
+                    JOptionPane.showMessageDialog(null, "Num format error at lock pos");
+                  }
+                  Preferences.writeEmployees(employees);
+                  frame.repaint();
+                });
+                rightClickMenu.add(lockPos);
+              }
+              JMenuItem cancel = new JMenuItem("Cancel");
+              rightClickMenu.add(cancel);
+              rightClickMenu.show(e.getComponent(), e.getX(), e.getY());
+            }
+            else {
+              emp.toggleAvailable(dayClicked);
+              Preferences.writeEmployees(employees);
+              frame.repaint();
+            }
           }
           else if( dayClicked == -1 || dayClicked == -2 ) {
             if( e.getButton() == MouseEvent.BUTTON3 ) {
@@ -398,9 +425,6 @@ public class Driver {
   public int getEmployeeRowHeight() {
     return mediumFont.getSize() * 2;
   }
-  public int getLockBoxSize() {
-    return mediumFont.getSize() * 2 - 4;
-  }
 
   public class ScrollablePanel extends JPanel implements Scrollable {
 
@@ -411,27 +435,33 @@ public class Driver {
       g.fillRect(0, 0, getWidth(), getHeight());
       int row = 0;
       for (Employee e : employees) {
+        int y = getDrawY(row);
         g.setColor(Color.black);
         g.setFont(mediumFont);
-        g.drawString(e.getName(), 10, getDrawY(row) + mediumFont.getSize() + 5);
-        g.drawRect(0, getDrawY(row), 200, mediumFont.getSize() * 2);
-        g.setColor(Color.blue);
-        int lockBoxSize = getLockBoxSize();
-        g.drawRect(200 - lockBoxSize - 1, getDrawY(row)+2, lockBoxSize, lockBoxSize);
+        g.drawString(e.getName(), 10, y + mediumFont.getSize() + 5);
+        g.drawRect(0, y, 200, mediumFont.getSize() * 2);
         for (int day = 0; day < 5; day++) {
+          int x = 200 + day * 100;
           g.setColor(Color.black);
-          g.drawRect(200 + day * 100, getDrawY(row), 100, mediumFont.getSize() * 2);
+          g.drawRect(x, y, 100, mediumFont.getSize() * 2);
           if (e.available(day)) {
             g.setColor(Color.green);
           } else {
             g.setColor(Color.red);
           }
           int offset = 1;
-          g.fillRect(200 + day * 100 + offset, getDrawY(row) + offset, 100 - offset, mediumFont.getSize() * 2 - offset);
+          g.fillRect(x + offset, y + offset, 100 - offset, mediumFont.getSize() * 2 - offset);
           if (e.available(day)) {
             g.setColor(Color.black);
             g.setFont(tinyFont);
-            g.drawString(Day.getNameofDay(day), 205 + day * 100, (int) (getDrawY(row) + mediumFont.getSize()*1.5));
+            g.drawString(Day.getNameofDay(day), x + 5, (int) (y + mediumFont.getSize()*1.5));
+          }
+          if (e.isPositionLocked(day)) {
+            g.setColor(Color.black);
+            g.setFont(tinyFont);
+            String str = "Pos " + (e.getLockedPosition(day) + 1);
+            int strWidth = g.getFontMetrics().stringWidth(str);
+            g.drawString(str, x + 100 - strWidth, (int) (y + tinyFont.getSize()));
           }
         }
         row++;

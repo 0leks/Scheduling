@@ -48,6 +48,9 @@ public class Variable {
   public void removeFromDomain( Employee e ) {
     domain.remove(e);
   }
+  public void removeAllFromDomainExcept(Employee keep) {
+    domain.removeIf(e -> e != keep);
+  }
   
   public void unAssign() {
     domain.clear();
