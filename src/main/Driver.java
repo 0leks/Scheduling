@@ -249,17 +249,17 @@ public class Driver {
         frame.repaint();
       }
     });
-    Integer[] positionsOptions = new Integer[] { 3, 4, 5, 6, 7, 8};
+    Integer[] positionsOptions = new Integer[] { 3, 4, 5, 6, 7, 8, 9, 10};
     JComboBox<Integer> numberPositions = new JComboBox<Integer>(positionsOptions);
     numberPositions.setFont(mainFont);
     numberPositions.setToolTipText("Number of positions per day.");
-    numberPositions.setSelectedIndex(3); // 6 positions is default
     numberPositions.addItemListener(new ItemListener() {
       @Override
       public void itemStateChanged(ItemEvent e) {
         Assigner.NUM_POSITIONS = (Integer)numberPositions.getSelectedItem();
       }
     });
+    numberPositions.setSelectedIndex(5); // 8 positions is default
     
     JPanel generatePanel = new JPanel();
     generatePanel.add(create);
@@ -769,7 +769,12 @@ public class Driver {
     applyHolidays();
     PrintWriter fileOut;
     try {
-      String fileName = "Mohr_" + monthName + "_Schedule.html";
+      String fileName = "Mohr_" + monthName + "_Schedule";
+      String chosenFileName = JOptionPane.showInputDialog(frame, "Choose File Name", fileName);
+      if( chosenFileName == null ) {
+        return;
+      }
+      fileName = chosenFileName + ".html";
       fileOut = new PrintWriter(new FileWriter(fileName, false));
 
       //filename = 'Mohr_' + month[0:3] + '_' + month2[0:3] + '_' + yearstr + '_Schedule.html'
@@ -781,16 +786,17 @@ public class Driver {
       fileOut.print("</title>\n");
       fileOut.print("<style type=\"text/css\">\n");
       fileOut.print("th, td { padding:1px; padding-right: 20px; width: 230px; font-weight: bold;font-size: 18px; vertical-align: top;}\n");
+      fileOut.print("li { font-weight: normal;font-size: 16px; }\n");
       fileOut.print("td { height: 139px;}\n");
       fileOut.print("h2 {text-align: center;}\n");
-      fileOut.print("ol { -webkit-margin-before: 5px; -webkit-margin-after: 5px; }\n");
+      fileOut.print("ol { -webkit-margin-before: 5px; -webkit-margin-after: 5px; margin-block-start: 0.1em; margin-block-end: 0.1em;}\n");
       fileOut.print("table, th, td {border: 1px solid black;border-collapse: collapse;}\n");
       fileOut.print("</style>\n");
       fileOut.print("</head>\n");
 
       fileOut.print("\n<body>\n");
 
-      fileOut.print("<h2>Yard Duty Schedule</h2>\n");
+      fileOut.print("<h2>Noon Supervisor Schedule</h2>\n");
       monthHeader = "<h2>" + monthName + " " + year;
       fileOut.print(monthHeader);
       fileOut.print("</h2>\n");
@@ -816,9 +822,16 @@ public class Driver {
           }
           else if( !days[week][day].isUnused() ) {
             fileOut.print("<ol>\n");
-            for( Employee e : days[week][day].getAssignments() ) {
+            List<Employee> assigned = days[week][day].getAssignments();
+            for(int position = 0; position < assigned.size(); position++) {
+              Employee e = assigned.get(position);
               fileOut.print("<li>");
               fileOut.print(e.getName());
+              if( position == 1 || position == 5 ) {
+                position++;
+                Employee b = assigned.get(position);
+                fileOut.print(" " + b.getName());
+              }
               fileOut.print("</li>\n");
             }
             fileOut.print("</ol>\n");

@@ -1,12 +1,8 @@
-N Y -1 Y -1 Y -1 Y -1 asdf
-Y -1 N Y -1 N N asdf2
-Y -1 N N N Y -1 asdf3
-N Y -1 Y -1 N N asdf4
-N Y -1 N N Y -1 asdf5
-Y -1 Y -1 Y -1 Y -1 N asdf6
-N N N Y -1 Y -1 asdf7
-Y -1 Y -1 N Y -1 N asdf8
-N N N Y -1 N asdf9
-Y -1 N Y -1 N N asdf10
-N N N N Y -1 asdf11
 Y 0 Y 0 Y 0 Y 0 Y 0 John Smith
+Y -1 Y -1 Y -1 Y -1 Y -1 Joe
+Y -1 Y -1 Y -1 Y -1 Y -1 Sally
+Y -1 Y -1 Y -1 Y -1 Y -1 Kim
+Y -1 Y -1 Y -1 Y -1 Y -1 Aditi
+Y -1 Y -1 Y -1 Y -1 Y -1 Yash
+Y -1 Y -1 Y -1 Y -1 Y -1 Nick
+Y -1 Y -1 Y -1 Y -1 Y -1 Sasha
