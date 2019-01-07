@@ -259,7 +259,7 @@ public class Driver {
         Assigner.NUM_POSITIONS = (Integer)numberPositions.getSelectedItem();
       }
     });
-    numberPositions.setSelectedIndex(5); // 6 positions is default
+    numberPositions.setSelectedIndex(5); // 8 positions is default
     
     JPanel generatePanel = new JPanel();
     generatePanel.add(create);
@@ -827,7 +827,7 @@ public class Driver {
               Employee e = assigned.get(position);
               fileOut.print("<li>");
               fileOut.print(e.getName());
-              if( position == 2 || position == 6 ) {
+              if( position == 1 || position == 5 ) {
                 position++;
                 Employee b = assigned.get(position);
                 fileOut.print(" " + b.getName());
