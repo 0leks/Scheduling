@@ -720,11 +720,16 @@ public class Driver {
       int height = this.getHeight();
       int cellwidth = width / 5;
       int cellheight = height / 5;
+      
+      int numPositions = Assigner.NUM_POSITIONS;
+      int spacePerName = (cellheight - tinyFont.getSize()*3)/(numPositions + 1);
+      
+      spacePerName = Math.min(tinyFont.getSize(), spacePerName);
+      Font font = tinyFont.deriveFont((float)spacePerName);
+      
       g.setColor(COLOR_BACKGROUND);
       g.fillRect(0, 0, width, height);
-
-      int fontsize = tinyFont.getSize();
-      g.setFont(tinyFont);
+      
       g.setColor(Color.black);
       for (int week = 0; week < days.length; week++) {
         for (int day = 0; day < days[week].length; day++) {
@@ -742,19 +747,33 @@ public class Driver {
           g.setColor(Color.black);
           g.drawRect(x, y, cellwidth, cellheight);
           if (days[week][day].getOfficialDate() != 0) {
-            g.drawString(days[week][day].getOfficialDate() + " " + days[week][day].getName(), x + 3, y + fontsize + 2);
+            g.setColor(Color.GRAY);
             g.setFont(tinyFont);
+            g.drawString(days[week][day].getOfficialDate() + " " + days[week][day].getName(), x + 3, y + tinyFont.getSize() + 2);
             g.drawString(days[week][day].getMonth() + " " + days[week][day].getYear(), x + 3, y + cellheight-4);
             if (days[week][day].isHoliday()) {
+              g.setColor(Color.black);
               g.setFont(mediumFont);
-              g.drawString(days[week][day].getText(), x + 3, y + 2 * fontsize + 8);
-              g.setFont(tinyFont);
+              g.drawString(days[week][day].getText(), x + 3, y + 2 * tinyFont.getSize() + 8);
             }
             else 
             if( !days[week][day].isUnused() && days[week][day].hasAssignments() ) {
               for( int index = 0; index < days[week][day].getAssignments().size(); index++ ) {
-                g.setFont(tinyFont);
-                g.drawString(days[week][day].getAssignments().get(index).getName(), x + 3, y + (2+index) * fontsize + 3*index+2);
+                
+                // pos 2 and 5 have 2 people assigned
+                String preString = "  ";
+                if( index <= 1 ) {
+                  preString = (index+1) + "";
+                }
+                if( index >= 3 && index <= 5 ) {
+                  preString = index + "";
+                }
+                if(index >= 7) { 
+                  preString = (index-1) + "";
+                }
+                g.setColor(Color.black);
+                g.setFont(font);
+                g.drawString(preString + " " + days[week][day].getAssignments().get(index).getName(), x + 3, y + 2*tinyFont.getSize() + index * font.getSize() + 3*index+2);
               }
             }
           }
@@ -769,7 +788,7 @@ public class Driver {
     applyHolidays();
     PrintWriter fileOut;
     try {
-      String fileName = "Mohr_" + monthName + "_Schedule";
+      String fileName = "Mohr_" + year + "_" + monthName + "_Schedule";
       String chosenFileName = JOptionPane.showInputDialog(frame, "Choose File Name", fileName);
       if( chosenFileName == null ) {
         return;
