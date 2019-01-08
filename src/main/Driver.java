@@ -60,13 +60,10 @@ public class Driver {
   private ViewPanel viewPanel;
   private JPanel buttonPanel;
 
-  //private JComboBox months;
   private JPanel timeframe;
   private JButton create;
   private JButton save;
   private JButton editEmployees;
-  private JButton editHolidays;
-//  private JTextField holidayNames;
   private String previousHolidayName = "Holiday";
 
   private JPanel employeePanel;
@@ -84,7 +81,6 @@ public class Driver {
   
   public Driver() {
 
-    // setUpCalendar();
     employees = new ArrayList<Employee>();
     Preferences.readEmployees(employees);
 
