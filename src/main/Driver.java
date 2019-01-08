@@ -716,50 +716,48 @@ public class Driver {
 
     @Override
     public void paintComponent(Graphics g) {
-      int width = this.getWidth();
-      int height = this.getHeight();
-      int cellwidth = width / 5;
-      int cellheight = height / 5;
+      // 5 days per the week
+      int cellwidth = this.getWidth() / 5;
+      // maximum 5 weeks per month
+      int cellheight = this.getHeight() / 5;
       
-      int numPositions = Assigner.NUM_POSITIONS;
-      int spacePerName = (cellheight - tinyFont.getSize()*3)/(numPositions + 1);
+      // leave space for date/day and month/year
+      int spacePerName = (cellheight - tinyFont.getSize()*3)/(Assigner.NUM_POSITIONS + 1);
       
+      // don't let font size get too small
       spacePerName = Math.min(tinyFont.getSize(), spacePerName);
-      Font font = tinyFont.deriveFont((float)spacePerName);
+      
+      Font employeeFont = tinyFont.deriveFont((float)spacePerName);
       
       g.setColor(COLOR_BACKGROUND);
-      g.fillRect(0, 0, width, height);
+      g.fillRect(0, 0, this.getWidth(), this.getHeight());
       
-      g.setColor(Color.black);
       for (int week = 0; week < days.length; week++) {
         for (int day = 0; day < days[week].length; day++) {
 //          if( days[week][day].isUnclickable() ) {
 //            continue;
 //          }
-          int x = cellwidth * day;
-          int y = cellheight * week;
+          int cellx = cellwidth * day;
+          int celly = cellheight * week;
+          g.setColor(COLOR_CALENDAR);
           if( day == dayHovered && week == monthHovered ) {
             g.setColor(COLOR_HOVER);
-          } else {
-            g.setColor(COLOR_CALENDAR);
           }
-          g.fillRect(x, y, cellwidth, cellheight);
+          g.fillRect(cellx, celly, cellwidth, cellheight);
           g.setColor(Color.black);
-          g.drawRect(x, y, cellwidth, cellheight);
+          g.drawRect(cellx, celly, cellwidth, cellheight);
           if (days[week][day].getOfficialDate() != 0) {
             g.setColor(Color.GRAY);
             g.setFont(tinyFont);
-            g.drawString(days[week][day].getOfficialDate() + " " + days[week][day].getName(), x + 3, y + tinyFont.getSize() + 2);
-            g.drawString(days[week][day].getMonth() + " " + days[week][day].getYear(), x + 3, y + cellheight-4);
+            g.drawString(days[week][day].getOfficialDate() + " " + days[week][day].getName(), cellx + 3, celly + tinyFont.getSize() + 2);
+            g.drawString(days[week][day].getMonth() + " " + days[week][day].getYear(), cellx + 3, celly + cellheight-4);
             if (days[week][day].isHoliday()) {
               g.setColor(Color.black);
               g.setFont(mediumFont);
-              g.drawString(days[week][day].getText(), x + 3, y + 2 * tinyFont.getSize() + 8);
+              g.drawString(days[week][day].getText(), cellx + 3, celly + 2 * tinyFont.getSize() + 8);
             }
-            else 
-            if( !days[week][day].isUnused() && days[week][day].hasAssignments() ) {
+            else if( !days[week][day].isUnused() && days[week][day].hasAssignments() ) {
               for( int index = 0; index < days[week][day].getAssignments().size(); index++ ) {
-                
                 // pos 2 and 5 have 2 people assigned
                 String preString = "  ";
                 if( index <= 1 ) {
@@ -772,16 +770,16 @@ public class Driver {
                   preString = (index-1) + "";
                 }
                 g.setColor(Color.black);
-                g.setFont(font);
-                g.drawString(preString + " " + days[week][day].getAssignments().get(index).getName(), x + 3, y + 2*tinyFont.getSize() + index * font.getSize() + 3*index+2);
+                g.setFont(employeeFont);
+                g.drawString(preString + " " + days[week][day].getAssignments().get(index).getName(), cellx + 3, celly + 2*tinyFont.getSize() + index * employeeFont.getSize() + 3*index+2);
               }
             }
           }
-
         }
       }
+      g.setColor(Color.black);
+      g.drawRect(0, 0, this.getWidth()-1, this.getHeight()-1);
     }
-
   }
   
   public void writeToFile() {
