@@ -44,9 +44,11 @@ import main.Driver.ViewPanel.HolidayField;
 public class Driver {
 
   public static final Color COLOR_CALENDAR = new Color(255, 255, 255);
-  public static final Color COLOR_BACKGROUND = new Color(100, 200, 200);
+  public static final Color COLOR_BACKGROUND = new Color(110, 210, 210);
   public static final Color COLOR_TEXTFIELD = Color.yellow;
   public static final Color COLOR_HOVER = new Color(220, 220, 220);
+  public static final Color COLOR_AVAILABLE = new Color(100, 240, 100);
+  public static final Color COLOR_NOT_AVAILABLE = COLOR_HOVER;
   
   private Font mainFont;
   private Font tinyFont;
@@ -314,6 +316,7 @@ public class Driver {
     };
     editPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 500, 50));
     employeePanel = new ScrollablePanel();
+    employeePanel.setBackground(COLOR_NOT_AVAILABLE);
     employeePanel.setPreferredSize(new Dimension(720, getDrawY(employees.size()) + 10));
     employeePanel.setAutoscrolls(true);
     employeePanel.addMouseListener(new MouseAdapter() {
@@ -448,12 +451,10 @@ public class Driver {
         g.drawRect(0, y, 200, mediumFont.getSize() * 2);
         for (int day = 0; day < 5; day++) {
           int x = 200 + day * 100;
-          g.setColor(Color.black);
-          g.drawRect(x, y, 100, mediumFont.getSize() * 2);
           if (e.available(day)) {
-            g.setColor(Color.green);
+            g.setColor(COLOR_AVAILABLE);
           } else {
-            g.setColor(Color.red);
+            g.setColor(COLOR_NOT_AVAILABLE);
           }
           int offset = 1;
           g.fillRect(x + offset, y + offset, 100 - offset, mediumFont.getSize() * 2 - offset);
@@ -464,11 +465,18 @@ public class Driver {
           }
           if (e.isPositionLocked(day)) {
             g.setColor(Color.black);
-            g.setFont(tinyFont);
+            if(e.available(day)) {
+              g.setFont(tinyFont.deriveFont(Font.BOLD));
+            }
+            else {
+              g.setFont(tinyFont);
+            }
             String str = "Pos " + (e.getLockedPosition(day) + 1);
             int strWidth = g.getFontMetrics().stringWidth(str);
             g.drawString(str, x + 100 - strWidth, (int) (y + tinyFont.getSize()));
           }
+          g.setColor(Color.black);
+          g.drawRect(x, y, 100, mediumFont.getSize() * 2);
         }
         row++;
       }

@@ -1,8 +1,8 @@
-N Y 0 Y 0 Y 0 Y 0 John Smith
-Y -1 N Y -1 Y -1 Y -1 Joe
+N Y 0 Y -1 Y 0 Y 0 John
+Y -1 N Y -1 Y -1 Y -1 Glen
 Y -1 Y -1 N Y -1 Y -1 Sally
-Y -1 Y -1 Y -1 N Y -1 Kim
-Y -1 Y -1 Y -1 Y -1 N Aditi
+Y -1 Y 2 Y -1 N Y -1 Kim
+Y -1 Y 6 Y -1 Y -1 N Aditi
 N Y -1 Y -1 Y -1 Y -1 Yash
 Y -1 N Y -1 Y -1 Y -1 Nick
 Y -1 Y -1 N Y -1 Y -1 Sasha

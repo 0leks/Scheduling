@@ -24,9 +24,6 @@ public class Employee {
   
   public void toggleAvailable(int day) {
     available[day] = !available[day];
-    if(!available[day]) {
-      clearLockedPosition(day);
-    }
   }
   
   public void lockedPosition(int day, int position) {
