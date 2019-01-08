@@ -242,7 +242,13 @@ public class Driver {
       public void actionPerformed(ActionEvent arg0) {
         System.err.println(days[0].length + " positions");
         applyHolidays();
-        Day[][] newDays = (new Assigner().generateSchedule(days, employees));
+        Assigner assigner = new Assigner();
+        String possibleString = assigner.checkIfPossible(days, employees);
+        if(possibleString != null) {
+          JOptionPane.showMessageDialog(frame, possibleString);
+          return;
+        }
+        Day[][] newDays = assigner.generateSchedule(days, employees);
         if( days != null ) {
           days = newDays;
         }

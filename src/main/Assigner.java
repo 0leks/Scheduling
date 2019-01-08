@@ -1,6 +1,6 @@
 package main;
 
-import java.util.List;
+import java.util.*;
 
 public class Assigner {
   
@@ -10,6 +10,46 @@ public class Assigner {
 
   public Assigner() {
     
+  }
+
+  public String checkIfPossible(Day[][] days, List<Employee> employees) {
+    int[] numAvailablePerDay = new int[5];
+    for(Employee employee : employees) {
+      for(int day = 0; day < numAvailablePerDay.length; day++) {
+        if(employee.available(day)) {
+          numAvailablePerDay[day]++;
+        }
+      }
+    }
+    LinkedList<String> failedDays = new LinkedList<>();
+    for(int day = 0; day < numAvailablePerDay.length; day++) {
+      if(numAvailablePerDay[day] < Assigner.NUM_POSITIONS) {
+        failedDays.add(days[0][day].getName());
+      }
+    }
+    if(failedDays.size() == 0) {
+      return null;
+    }
+    else {
+      return "Not enough employees available for: " + combineListEnglish(failedDays) + ".";
+    }
+  }
+  public String combineListEnglish(List<String> list) {
+    if(list.isEmpty()) {
+      return "";
+    }
+    if(list.size() == 1) {
+      return list.get(0);
+    }
+    if(list.size() == 2) {
+      return list.get(0) + " and " + list.get(1);
+    }
+    String combined = "";
+    while(list.size() > 1) {
+      combined += list.remove(0) + ", ";
+    }
+    combined += "and " + list.remove(0);
+    return combined;
   }
   
   public Day[][] generateSchedule(Day[][] days, List<Employee> employees) {
