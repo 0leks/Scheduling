@@ -59,8 +59,15 @@ public class Assigner {
     for( int week = 0; week < days.length; week++ ) {
       for( int day = 0; day < result[0].length; day++ ) {
         days[week][day].clearAssignments();
+      }
+
+      for( int day = 0; day < result[0].length; day++ ) {
         for( int position = 0; position < result[0][day].length; position++ ) {
-            days[week][day].assign(result[week][day][position].getAssignment());
+          Employee e = result[week][day][position].getAssignment();
+          days[week][day].assign(e);
+//          for( int day2 = day+1; day2 < result[0].length; day2++) {
+//            days[week][day2].assign(e);
+//          }
 //            days[week][day].assign(result[0][day][(position + week*3 )%result[0][day].length].getAssignment());
 //          }
         }

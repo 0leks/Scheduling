@@ -10,6 +10,9 @@ import javax.swing.JOptionPane;
 public class TestAssignment {
   
   private Random rand = new Random(System.currentTimeMillis());
+  
+  private Employee currentEmployee;
+  private Dat currentDat;
 
   public void validateEmployeePreferences(List<Employee> employees) {
     // asdf TODO
@@ -86,14 +89,21 @@ public class TestAssignment {
     
     while( true ) {
       Variable[][][] copy = copy(variables);
-      Variable var = selectVariableToAssign(copy);
+      Dat dat = selectVariableToAssign(copy);
+      Variable var = copy[dat.week][dat.day][dat.position];
       Variable oldVar = findVariable(variables, var);
       
-      List<Employee> domain = var.getDomain();
-      Employee emp = selectValueToAssign(copy, var, domain);
+      Employee emp = currentEmployee;
+      if( emp == null ) {
+        List<Employee> domain = var.getDomain();
+        emp = selectValueToAssign(copy, var, domain);
+      }
 
       //System.out.println("                    Assigning " + emp + " to " + var);
       var.assign(emp);
+      
+      currentEmployee = emp;
+      currentDat = dat;
       
       Edge[] edges = createEdges(copy);
       
@@ -120,6 +130,10 @@ public class TestAssignment {
         return null;
       }
     }
+    
+
+    
+    
 //    System.out.println("}");
 //    return null;
   }
@@ -187,18 +201,33 @@ public class TestAssignment {
     return domain.get(0);
   }
   
-  public Variable selectVariableToAssign(Variable[][][] variables) {
+  public Dat selectVariableToAssign(Variable[][][] variables) {
 
-    List<Variable> unassigned = new ArrayList<Variable>();
     
-    for( int week = 0; week < variables.length; week++ ) {
-      for( int day = 0; day < variables[week].length; day++ ) {
+    if( currentEmployee != null) {
+      for(int day = currentDat.day + 1; day < variables[0].length; day++) {
+        if(!variables[currentDat.week][day][currentDat.position].isAssigned() ) {
+          if(variables[currentDat.week][day][currentDat.position].getDomain().contains(currentEmployee)) {
+            return new Dat(currentDat.week, day, currentDat.position);
+          }
+        }
+      }
+      currentEmployee = null;
+    }
+    List<Dat> unassigned = new ArrayList<Dat>();
+    
+    for( int day = 0; day < variables[0].length; day++ ) {
+      for( int week = 0; week < variables.length; week++ ) {
         for( int position = 0; position < variables[week][day].length; position++ ) {
           if( !variables[week][day][position].isAssigned() ) {
-            unassigned.add(variables[week][day][position]);
+            unassigned.add(new Dat(week, day, position));
+            //unassigned.add(variables[week][day][position]);
             //return variables[week][day][position];
           }
         }
+      }
+      if( unassigned.size() > 0 ) {
+        return unassigned.get( rand.nextInt(unassigned.size()) );
       }
     }
     if( unassigned.size() == 0 ) {
