@@ -1,0 +1,23 @@
+
+.border {
+    border: 1px solid gray;
+}
+#availability {
+    border: 2px solid gray;
+}
+
+#positiondistribution {
+    border: 2px solid gray;
+
+}
+
+#day {
+    display: inline-block; 
+    *display: inline; 
+    zoom: 1; 
+    vertical-align: top; 
+    font-size: 12px;
+    width: 19%; 
+    background: yellow;
+}
+
