@@ -253,21 +253,21 @@ public class Driver {
         frame.repaint();
       }
     });
-//    Integer[] positionsOptions = new Integer[] { 4, 5, 6, 7, 8, 9, 10, 11, 12, };
-//    JComboBox<Integer> numberPositions = new JComboBox<Integer>(positionsOptions);
-//    numberPositions.setFont(mainFont);
-//    numberPositions.setToolTipText("Number of positions per day.");
-//    numberPositions.addItemListener(new ItemListener() {
-//      @Override
-//      public void itemStateChanged(ItemEvent e) {
-//        Assigner.NUM_POSITIONS = (Integer)numberPositions.getSelectedItem();
-//      }
-//    });
-//    numberPositions.setSelectedIndex(5); // 8 positions is default
+    Integer[] positionsOptions = new Integer[] { 3, 4, 5, 6, 7, 8, 9, 10};
+    JComboBox<Integer> numberPositions = new JComboBox<Integer>(positionsOptions);
+    numberPositions.setFont(mainFont);
+    numberPositions.setToolTipText("Number of positions per day.");
+    numberPositions.addItemListener(new ItemListener() {
+      @Override
+      public void itemStateChanged(ItemEvent e) {
+        Assigner.NUM_POSITIONS = (Integer)numberPositions.getSelectedItem();
+      }
+    });
+    numberPositions.setSelectedIndex(5); // 8 positions is default
     
     JPanel generatePanel = new JPanel();
     generatePanel.add(create);
-    //generatePanel.add(numberPositions);
+    generatePanel.add(numberPositions);
     buttonPanel.add(generatePanel);
     save = new JButton("Save");
     save.setFont(mainFont);
@@ -731,14 +731,8 @@ public class Driver {
       // maximum 5 weeks per month
       int cellheight = this.getHeight() / 5;
       
-
-      int namesPerColumn = Assigner.NUM_POSITIONS;
-      if(Assigner.NUM_POSITIONS >= 10) {
-          namesPerColumn = (Assigner.NUM_POSITIONS+1)/2;
-      }
-      
       // leave space for date/day and month/year
-      int spacePerName = (cellheight - tinyFont.getSize()*3)/(Assigner.NUM_POSITIONS*4/5 + 1);
+      int spacePerName = (cellheight - tinyFont.getSize()*3)/(Assigner.NUM_POSITIONS + 1);
       
       // don't let font size get too small
       spacePerName = Math.min(tinyFont.getSize(), spacePerName);
@@ -747,7 +741,6 @@ public class Driver {
       
       g.setColor(COLOR_BACKGROUND);
       g.fillRect(0, 0, this.getWidth(), this.getHeight());
-      
       
       for (int week = 0; week < days.length; week++) {
         for (int day = 0; day < days[week].length; day++) {
@@ -776,18 +769,19 @@ public class Driver {
             else if( !days[week][day].isUnused() && days[week][day].hasAssignments() ) {
               for( int index = 0; index < days[week][day].getAssignments().size(); index++ ) {
                 // pos 2 and 5 have 2 people assigned
-                String preString = "";
+                String preString = "  ";
+                if( index <= 1 ) {
+                  preString = (index+1) + "";
+                }
+                if( index >= 3 && index <= 5 ) {
+                  preString = index + "";
+                }
+                if(index >= 7) { 
+                  preString = (index-1) + "";
+                }
                 g.setColor(Color.black);
                 g.setFont(employeeFont);
-                int column = 0;
-                int row = index;
-                if(index >= namesPerColumn) {
-                    column = 1;
-                    row = index-namesPerColumn;
-                }
-                int xPixel = cellx + 3 + column*cellwidth/2;
-                int yPixel = celly + 2*tinyFont.getSize() + row * employeeFont.getSize() + 3*row+2;
-                g.drawString(preString + " " + days[week][day].getAssignments().get(index).getName(), xPixel, yPixel);
+                g.drawString(preString + " " + days[week][day].getAssignments().get(index).getName(), cellx + 3, celly + 2*tinyFont.getSize() + index * employeeFont.getSize() + 3*index+2);
               }
             }
           }
@@ -854,15 +848,20 @@ public class Driver {
             fileOut.print("</ul>\n");
           }
           else if( !days[week][day].isUnused() ) {
-            fileOut.print("<ul>\n");
+            fileOut.print("<ol>\n");
             List<Employee> assigned = days[week][day].getAssignments();
             for(int position = 0; position < assigned.size(); position++) {
               Employee e = assigned.get(position);
               fileOut.print("<li>");
               fileOut.print(e.getName());
+              if( position == 1 || position == 5 ) {
+                position++;
+                Employee b = assigned.get(position);
+                fileOut.print(" " + b.getName());
+              }
               fileOut.print("</li>\n");
             }
-            fileOut.print("</ul>\n");
+            fileOut.print("</ol>\n");
           }
           
           fileOut.print("</td>\n");
