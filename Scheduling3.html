@@ -1,0 +1,143 @@
+<html>
+    <head>
+            <link rel="stylesheet" type="text/css" href="stylesheet.css" media="screen"/>
+            <link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.css" media="screen"/>
+            <script src="bootstrap/js/jquery.min.js"></script>
+            <script src="bootstrap/js/popper.min.js"></script>
+            <script src="bootstrap/js/bootstrap.js"></script>
+
+    </head>
+    <body>
+
+        <div id="accordion">
+            <div class="card">
+                <div class="card-header" id="headingOne">
+                <h5 class="mb-0">
+                    <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                    Employee Availability
+                    </button>
+                </h5>
+                </div>
+            
+                <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+                <div class="card-body">
+                        <div class="input-group">
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input" id="fileToLoad2">
+                                <label class="custom-file-label" for="fileToLoad2">Choose file</label>
+                            </div>
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary" type="button" onclick="loadFileAsText()">Upload</button>
+                            </div>
+                        </div>
+                        <table class="table">
+                                <thead>
+                                    <tr>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Monday</th>
+                                    <th scope="col">Tuesday</th>
+                                    <th scope="col">Wednesday</th>
+                                    <th scope="col">Thursday</th>
+                                    <th scope="col">Friday</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="availabilityTable">
+                                </tbody>
+                                </table>
+                                <!-- <button type="button" class="btn btn-primary">Add Employee</button> -->
+                </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header" id="headingTwo">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                        Position Distribution
+                        </button>
+                    </h5>
+                </div>
+                <button type="button" class="btn btn-primary" onclick="generateSchedule()">Generate Schedule</button>
+                <div class="card-body">
+                        <div id="day">
+                                <h2>
+                                    Monday
+                                </h2>
+                                <ul class="border">
+                                    <li>
+                                        employee
+                                    </li>
+                                    <li>
+                                        employee
+                                    </li>
+                                </ul>
+                                <ul class="border">
+                                    <li>
+                                        employee
+                                    </li>
+                                    <li>
+                                        employee
+                                    </li>
+                                </ul>
+                                <ul class="border">
+                                    <li>
+                                        employee
+                                    </li>
+                                    <li>
+                                        employee
+                                    </li>
+                                </ul>
+                                <ul class="border">
+                                    <li>
+                                        employee
+                                    </li>
+                                    <li>
+                                        employee
+                                    </li>
+                                </ul>
+                            </div>
+                            <div id="day">
+                                <h2>
+                                    Tuesday
+                                </h2>
+                            </div>
+                            <div id="day">
+                                <h2>  
+                                    Wednesday
+                                </h2>
+                            </div>
+                            <div id="day">
+                                <h2>
+                                    Thursday
+                                </h2>
+                            </div>
+                            <div id="day">
+                                <h2>
+                                    Friday
+                                </h2>
+                            </div>
+                </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header" id="headingThree">
+                <h5 class="mb-0">
+                    <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                    Calendar View
+                    </button>
+                </h5>
+                </div>
+                <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
+                <div class="card-body">
+                    Holidays and Manual Modifications
+                </div>
+                </div>
+            </div>
+            </div>
+
+            Generate button here   ||   Download button here
+        </div>
+
+            
+        <script src="index.js"></script>
+    </body>
+</html>

@@ -1,0 +1,23 @@
+Sheduling 3.0:
+
+Same employee availablity as scheduling 2.0
+
+When generating schedule, all available employees are always assigned to each day they are available.
+But try to keep them in the same position.
+
+UI flow:
+1 Update employee availability and position preferences.
+2 Generate
+	a) for each day of the week, specify number of positions and number of employees in each position
+	b) assign employees with position preferences to their preferred positions.
+	c) randomly select unfilled positions and randomly select available employee to fill that position.
+	
+	
+For employee availability:
+5 days, true false for each day (encoded as green/red)
+Display preferred position for each cell (employee, day)
+add employee button
+
+Click on table element to toggle true/false
+right click to select preferred position
+
