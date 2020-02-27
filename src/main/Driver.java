@@ -253,7 +253,7 @@ public class Driver {
         frame.repaint();
       }
     });
-    Integer[] positionsOptions = new Integer[] { 3, 4, 5, 6, 7, 8, 9, 10};
+    Integer[] positionsOptions = new Integer[] { 5, 6, 7, 8, 9, 10, 11, 12};
     JComboBox<Integer> numberPositions = new JComboBox<Integer>(positionsOptions);
     numberPositions.setFont(mainFont);
     numberPositions.setToolTipText("Number of positions per day.");
@@ -770,15 +770,16 @@ public class Driver {
               for( int index = 0; index < days[week][day].getAssignments().size(); index++ ) {
                 // pos 2 and 5 have 2 people assigned
                 String preString = "  ";
-                if( index <= 1 ) {
-                  preString = (index+1) + "";
-                }
-                if( index >= 3 && index <= 5 ) {
-                  preString = index + "";
-                }
-                if(index >= 7) { 
-                  preString = (index-1) + "";
-                }
+                preString = (1 + index/2) + "";
+//                if( index <= 1 ) {
+//                  preString = (index+1) + "";
+//                }
+//                if( index >= 3 && index <= 5 ) {
+//                  preString = index + "";
+//                }
+//                if(index >= 7) { 
+//                  preString = (index-1) + "";
+//                }
                 g.setColor(Color.black);
                 g.setFont(employeeFont);
                 g.drawString(preString + " " + days[week][day].getAssignments().get(index).getName(), cellx + 3, celly + 2*tinyFont.getSize() + index * employeeFont.getSize() + 3*index+2);
@@ -854,11 +855,9 @@ public class Driver {
               Employee e = assigned.get(position);
               fileOut.print("<li>");
               fileOut.print(e.getName());
-              if( position == 1 || position == 5 ) {
                 position++;
                 Employee b = assigned.get(position);
                 fileOut.print(" " + b.getName());
-              }
               fileOut.print("</li>\n");
             }
             fileOut.print("</ol>\n");

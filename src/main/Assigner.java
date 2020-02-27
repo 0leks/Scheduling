@@ -31,7 +31,8 @@ public class Assigner {
       return null;
     }
     else {
-      return "Not enough employees available for: " + combineListEnglish(failedDays) + ".";
+        return null;
+      //return "Not enough employees available for: " + combineListEnglish(failedDays) + ".";
     }
   }
   public String combineListEnglish(List<String> list) {
