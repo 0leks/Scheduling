@@ -36,6 +36,14 @@ public class Preferences {
       fileIn.close();
     }
     try {
+    	File prefFile = new File(PREFERENCES_LOCATION);
+    	if(!prefFile.exists()) {
+    		try {
+				prefFile.createNewFile();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+    	}
       fileIn = new Scanner(new File(PREFERENCES_LOCATION));
     } catch (FileNotFoundException e) {
       e.printStackTrace();
