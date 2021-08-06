@@ -206,7 +206,7 @@ public class Driver {
 				frame.repaint();
 			});
 			rightClickMenu.add(none);
-			for (int position = 0; position < Assigner.NUM_POSITIONS; position++) {
+			for (int position = 0; position < Assigner.NUM_POSITIONS/2; position++) {
 				JMenuItem lockPos = new JMenuItem("Lock Position " + (position + 1));
 				lockPos.setActionCommand("" + position);
 				lockPos.addActionListener(event -> {
