@@ -6,7 +6,7 @@ public class Assigner {
   
   private static final int NOBODY = -1;
   
-  public static int NUM_POSITIONS = 6;
+  public static int NUM_POSITIONS = 12;
 
   public Assigner() {
     

@@ -1,6 +1,8 @@
 package main;
 
 public class Employee {
+	private static int idcounter = 0;
+	private final int id;
   
   private String name;
   
@@ -13,6 +15,7 @@ public class Employee {
   private int[] lockedPositions;
 
   public Employee(String name) {
+	  this.id = idcounter++;
     this.name = name;
     available = new boolean[]{true, true, true, true, true};
     lockedPositions = new int[] {-1, -1, -1, -1, -1};
@@ -57,5 +60,19 @@ public class Employee {
   public String toString() {
     return name;
   }
- 
+  
+	@Override
+	public int hashCode() {
+	    return 257 * id;
+	}
+
+	@Override
+	public boolean equals(Object other) {
+		if (this == other)
+			return true;
+		return other != null 
+				&& getClass() == other.getClass() 
+				&& hashCode() == other.hashCode();
+	}
+	
 }
