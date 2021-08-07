@@ -1,5 +1,8 @@
-
-
+*.zip
+*.textfile
+*.exe
+*.sig
+privatekey
 bin/
 jre/
 
