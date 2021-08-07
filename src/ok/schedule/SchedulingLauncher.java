@@ -9,7 +9,7 @@ public class SchedulingLauncher {
 	
 	private void run() {
 
-		Launcher launch = new Launcher(appName, projectName);
+//		Launcher launch = new Launcher(appName, projectName);
 	}
 
 	public static void main(String[] args) {

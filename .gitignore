@@ -5,6 +5,7 @@
 privatekey
 bin/
 jre/
+schedulingjre/
 
 *.class
 

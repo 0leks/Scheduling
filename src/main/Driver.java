@@ -10,9 +10,12 @@ import java.util.List;
 
 import javax.swing.*;
 
+import ok.launcher.*;
 import ok.schedule.*;
 
 public class Driver {
+	
+	private static final String projectName = "scheduling";
 
 	public static final int BIG_NUMBER = 99999;
   public static final int BUTTON_PADDING = 10;
@@ -55,6 +58,15 @@ public class Driver {
 
   private int monthOffset = 0;
   
+  	private void checkForUpdates() {
+  		Thread updateThread = new Thread(() -> {
+  			boolean updated = new Launcher(projectName).update();
+  	  		if(updated) {
+  	  			JOptionPane.showMessageDialog(frame, "Updated scheduling. Please relaunch the app.");
+  	  		}
+  		});
+  		updateThread.start();
+  	}
 	public void run() {
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -63,6 +75,7 @@ public class Driver {
 		}
 		Preferences.readEmployees(employees);
 		initializeFrame();
+		checkForUpdates();
 		initializePanels();
 		initEditPanel();
 
@@ -177,7 +190,17 @@ public class Driver {
 		Dimension appsize = new Dimension(screensize.width * 9 / 10, screensize.height * 9 / 10);
 		frame.setSize(appsize);
 		frame.setLocationRelativeTo(null);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		frame.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				frame = null;
+			}
+			@Override
+			public void windowClosed(WindowEvent e) {
+				frame = null;
+			}
+		});
 	    URL iconURL = getClass().getResource("icon.png");
 	    if( iconURL != null ) {
 	      ImageIcon icon = new ImageIcon(iconURL);

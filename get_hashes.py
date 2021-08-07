@@ -14,7 +14,7 @@ def getHash(filepath):
 
 
 
-filelist = ['scheduling.exe', 'schedulinglauncher.exe']
+filelist = ['scheduling.exe', 'schedulingjre.zip']
 
 hashes = {filepath: getHash(filepath) for filepath in filelist}
 
