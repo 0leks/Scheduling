@@ -12,6 +12,7 @@ import javax.swing.*;
 
 import ok.launcher.*;
 import ok.schedule.*;
+import ok.schedule.Utils;
 
 public class Driver {
 	
@@ -79,6 +80,31 @@ public class Driver {
 		frame.setVisible(true);
 		frame.validate();
 	}
+
+	private void initializeFrame() {
+		frame = new JFrame("Scheduling 2.0.4");
+		Dimension screensize = Toolkit.getDefaultToolkit().getScreenSize();
+		Dimension appsize = new Dimension(screensize.width * 9 / 10, screensize.height * 9 / 10);
+		frame.setSize(appsize);
+		frame.setLocationRelativeTo(null);
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		frame.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				frame = null;
+			}
+			@Override
+			public void windowClosed(WindowEvent e) {
+				frame = null;
+			}
+		});
+	    URL iconURL = getClass().getResource("icon.png");
+	    if( iconURL != null ) {
+	      ImageIcon icon = new ImageIcon(iconURL);
+	      frame.setIconImage(icon.getImage());
+	    }
+	    frame.setLayout(new BorderLayout());
+	}
 	
 	private void initializePanels() {
 		mainPanel = new JPanel();
@@ -117,7 +143,7 @@ public class Driver {
 		timeframe.add(Box.createRigidArea(new Dimension(BUTTON_PADDING, 0)));
 		timeframe.add(rightShift);
 
-	    editEmployees = new JButton("Edit Employees");
+	    editEmployees = new JButton("Edit Employees", Utils.loadImageIconResource("/edit_employee_icon.png", 32, 32));
 	    editEmployees.setFont(MAIN_FONT);
 	    editEmployees.setMaximumSize(new Dimension(BIG_NUMBER, 0));
 	    editEmployees.addActionListener(e -> switchtoEditPanel());
@@ -126,7 +152,7 @@ public class Driver {
 	    generateButton.setMaximumSize(new Dimension(BIG_NUMBER, 0));
 	    generateButton.addActionListener(e -> generateButtonPressed());
 
-	    save = new JButton("Save");
+	    save = new JButton("Save", Utils.loadImageIconResource("/save_icon.png", 32, 32));
 	    save.setFont(MAIN_FONT);
 	    save.setMaximumSize(new Dimension(BIG_NUMBER, 0));
 	    save.addActionListener(e -> writeToFile());
@@ -177,31 +203,6 @@ public class Driver {
 		applyHolidays();
 		monthOffset += delta;
 		setUpCalendar();
-	}
-  
-	private void initializeFrame() {
-		frame = new JFrame("Scheduling 2.0.3");
-		Dimension screensize = Toolkit.getDefaultToolkit().getScreenSize();
-		Dimension appsize = new Dimension(screensize.width * 9 / 10, screensize.height * 9 / 10);
-		frame.setSize(appsize);
-		frame.setLocationRelativeTo(null);
-		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		frame.addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosing(WindowEvent e) {
-				frame = null;
-			}
-			@Override
-			public void windowClosed(WindowEvent e) {
-				frame = null;
-			}
-		});
-	    URL iconURL = getClass().getResource("icon.png");
-	    if( iconURL != null ) {
-	      ImageIcon icon = new ImageIcon(iconURL);
-	      frame.setIconImage(icon.getImage());
-	    }
-	    frame.setLayout(new BorderLayout());
 	}
 
   public void switchtoMainPanel() {
@@ -329,8 +330,9 @@ public class Driver {
 		}
 	    employeePane = new JScrollPane(employeePanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 	                       	        JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-	    
-	    JButton newEmployeeButton = new JButton("New Employee");
+
+	    ImageIcon icon = Utils.loadImageIconResource("/add_employee_icon.png", 32, 32);
+	    JButton newEmployeeButton = new JButton("New Employee", icon);
 	    newEmployeeButton.setFont(MAIN_FONT);
 	    newEmployeeButton.addActionListener(e -> addButtonPressed());
 	    JButton backButton = new JButton("Back");

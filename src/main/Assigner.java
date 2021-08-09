@@ -173,7 +173,7 @@ public class Assigner {
 			if (e.isPositionLocked(day)) {
 				if (e.getLockedPosition(day) >= assignments[day].length) {
 					JOptionPane.showMessageDialog(null, "ERROR: " + e.getName() + " has invalid locked position: "
-							+ e.getLockedPosition(day));
+							+ (e.getLockedPosition(day) + 1));
 				} else {
 					assignments[day][e.getLockedPosition(day)].employees.add(e);
 					bag[day].employees.remove(e);
