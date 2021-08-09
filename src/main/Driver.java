@@ -59,12 +59,7 @@ public class Driver {
   private int monthOffset = 0;
   
   	private void checkForUpdates() {
-  		Thread updateThread = new Thread(() -> {
-  			boolean updated = new Launcher(projectName).update();
-  	  		if(updated) {
-  	  			JOptionPane.showMessageDialog(frame, "Updated scheduling. Please relaunch the app.");
-  	  		}
-  		});
+  		Thread updateThread = new Thread(() -> new Updater(projectName).update());
   		updateThread.start();
   	}
 	public void run() {
@@ -185,7 +180,7 @@ public class Driver {
 	}
   
 	private void initializeFrame() {
-		frame = new JFrame("Scheduling 4");
+		frame = new JFrame("Scheduling 2.0.3");
 		Dimension screensize = Toolkit.getDefaultToolkit().getScreenSize();
 		Dimension appsize = new Dimension(screensize.width * 9 / 10, screensize.height * 9 / 10);
 		frame.setSize(appsize);

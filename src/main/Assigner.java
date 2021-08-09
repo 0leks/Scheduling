@@ -2,6 +2,8 @@ package main;
 
 import java.util.*;
 
+import javax.swing.*;
+
 public class Assigner {
   
   private static final int NOBODY = -1;
@@ -101,16 +103,20 @@ public class Assigner {
       return toret;
   }  
   
+  
+  private boolean isPossibleDay(Employee e, Bag[] bag, int day, Bag[][] assignments, int position, int EMPLOYEES_PER_POSITION) {
+	  return bag[day].employees.contains(e) && assignments[day][position].employees.size() < EMPLOYEES_PER_POSITION;
+  }
   public List<Integer> getPossibleDays(Employee e, Bag[] bag, Bag[][] assignments, int position, int EMPLOYEES_PER_POSITION) {
     List<Integer> possDays = new LinkedList<>();
     for(int day = 0; day < bag.length; day++) {
-      if(assignments[day][position].employees.contains(e) || assignments[day][position].employees.size() < EMPLOYEES_PER_POSITION) {
-        possDays.add(day);
-      }
+    	if(isPossibleDay(e, bag, day, assignments, position, EMPLOYEES_PER_POSITION)) {
+    		possDays.add(day);
+    	}
     }
     return possDays;
   }
-  public void assignToBestPosition(Employee e, Bag[] bag, Bag[][] assignments, int EMPLOYEES_PER_POSITION) {
+  public boolean assignToBestPosition(Employee e, Bag[] bag, Bag[][] assignments, int EMPLOYEES_PER_POSITION) {
     // find which position works the most
     int maxNum = -1;
     int bestPosition = -1;
@@ -123,14 +129,20 @@ public class Assigner {
         bestPosition = position;
       }
     }
-    System.out.println("assigning to " + bestPosition);
-    for(int day = 0; day < bag.length; day++) {
-      if(bag[day].employees.contains(e) && assignments[day][bestPosition].employees.size() < EMPLOYEES_PER_POSITION) {
-        System.out.println("day " + day);
-        assignments[day][bestPosition].employees.add(e);
-        bag[day].employees.remove(e);
-      }
-    }
+	System.out.println("assigning to " + bestPosition + " with " + maxNum + " poss days");
+	if(maxNum == 0) {
+		return false;
+	}
+	for (int day = 0; day < bag.length; day++) {
+		if (isPossibleDay(e, bag, day, assignments, bestPosition, EMPLOYEES_PER_POSITION)) {
+			System.out.println("day " + day);
+			assignments[day][bestPosition].employees.add(e);
+			bag[day].employees.remove(e);
+		} else {
+			System.out.println("failed to assign");
+		}
+	}
+	return true;
   }
   
   public Day[][] generateSchedule(Day[][] days, List<Employee> employees) {
@@ -147,7 +159,7 @@ public class Assigner {
       }
     }
     int NUM_POSITIONS = Assigner.NUM_POSITIONS/2;
-    int EMPLOYEES_PER_POSITION = 2;
+    int EMPLOYEES_PER_POSITION = 1;
     Bag[][] assignments = new Bag[NUM_DAYS][NUM_POSITIONS];
     for(int dayIndex = 0; dayIndex < NUM_DAYS; dayIndex++) {
       for(int position = 0; position < NUM_POSITIONS; position++) {
@@ -155,16 +167,21 @@ public class Assigner {
       }
     }
     // First assign employees that have a preferred position
-    for(int day = 0; day < assignments.length; day++) {
-      for(int employeeIndex = bag[day].employees.size()-1; employeeIndex >= 0; employeeIndex--) {
-        Employee e = bag[day].employees.get(employeeIndex);
-        if(e.isPositionLocked(day)) {
-          assignments[day][e.getLockedPosition(day)].employees.add(e);
-          bag[day].employees.remove(e);
-          System.out.println("Assigned " + e.getName() + " to position " + e.getLockedPosition(day));
-        }
-      }
-    }
+	for (int day = 0; day < assignments.length; day++) {
+		for (int employeeIndex = bag[day].employees.size() - 1; employeeIndex >= 0; employeeIndex--) {
+			Employee e = bag[day].employees.get(employeeIndex);
+			if (e.isPositionLocked(day)) {
+				if (e.getLockedPosition(day) >= assignments[day].length) {
+					JOptionPane.showMessageDialog(null, "ERROR: " + e.getName() + " has invalid locked position: "
+							+ e.getLockedPosition(day));
+				} else {
+					assignments[day][e.getLockedPosition(day)].employees.add(e);
+					bag[day].employees.remove(e);
+					System.out.println("Assigned " + e.getName() + " to position " + e.getLockedPosition(day));
+				}
+			}
+		}
+	}
     // then assign the rest of the employees to random positions
     List<Integer> possibleDays = new LinkedList<>();
     for(int i = 0; i < 5; i++) {
@@ -176,7 +193,11 @@ public class Assigner {
       while(!bag[day].employees.isEmpty()) {
         Employee e = bag[day].employees.get((int)(Math.random()*bag[day].employees.size()));
         System.out.println("Handling employee " + e.getName());
-        assignToBestPosition(e, bag, assignments, EMPLOYEES_PER_POSITION);
+        boolean success = assignToBestPosition(e, bag, assignments, EMPLOYEES_PER_POSITION);
+        if(!success) {
+        	System.out.println("failed to assign " + e + ", removing from list");
+        	bag[day].employees.remove(e);
+        }
       }
     }
 

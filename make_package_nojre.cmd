@@ -1,6 +1,4 @@
 
-rmdir /s schedulingjre
-"D:\ProgramFiles\Java\jdk-15.0.1\bin\jlink.exe" --module-path "%JAVA_HOME%\jmods";bin;"W:\Launcher\bin" --add-modules ok.scheduling,ok.launcher --output schedulingjre
 "D:\Program Files\Launch4j\launch4jc.exe" config.xml
 
 @rem certutil -hashfile scheduling.exe SHA512 | find /i /v "sha512" | find /i /v "certutil" > latest.textfile
