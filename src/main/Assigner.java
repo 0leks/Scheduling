@@ -146,7 +146,9 @@ public class Assigner {
   }
   
   public Day[][] generateSchedule(Day[][] days, List<Employee> employees) {
-    int NUM_DAYS = 5;
+
+    for( int week = 0; week < days.length; week++ ) {
+	  int NUM_DAYS = 5;
     Bag[] bag = new Bag[NUM_DAYS];
     for(int dayIndex = 0; dayIndex < NUM_DAYS; dayIndex++) {
       bag[dayIndex] = new Bag();
@@ -201,14 +203,9 @@ public class Assigner {
       }
     }
 
-    for( int week = 0; week < days.length; week++ ) {
-      for( int day = 0; day < days[week].length; day++ ) {
-        days[week][day].clearAssignments();
-      }
-    }
-    for( int day = 0; day < assignments.length; day++ ) {
-      for( int position = 0; position < assignments[day].length; position++ ) {
-        for( int week = 0; week < days.length; week++ ) {
+	    for( int day = 0; day < assignments.length; day++ ) {
+	    	days[week][day].clearAssignments();
+	      for( int position = 0; position < assignments[day].length; position++ ) {
           for(Employee e : assignments[day][position].employees) {
             days[week][day].assign(e);
           }

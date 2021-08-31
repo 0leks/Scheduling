@@ -643,7 +643,7 @@ public class Driver {
 	public int getDrawY(int index) {
 		return getEmployeeRowHeight() * (index);
 	}
-
+//windows + semicolon opens up emoji/symbol insert menu
 	public int getEmployeeRowHeight() {
 		return Driver.MEDIUM_FONT.getSize() * 2;
 	}
