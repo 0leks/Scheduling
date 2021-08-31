@@ -8,19 +8,27 @@ import javax.swing.*;
 import main.*;
 
 public class HtmlWriter {
+	private static final String EXTRA_STYLE = " style=\"background-color: rgba(255,255,255,0.45); background-blend-mode: lighten; background-position: right; background-size: contain; background-repeat: no-repeat; background-image: url(";
+	private static final String EXTRA_STYLE_AFTER = ")\" ";
+	private static String addExtra(int year, String month, int week, int day) {
+		String url = null;
+		if((year == 2021 && month.equals("October") && week == 4 && day == 4)
+			|| (year == 2022 && month.equals("October") && week == 4 && day == 0)) {
+			url = "http://clipart-library.com/images/pc58gx99i.png";
+		}
+		if(url != null) {
+			return EXTRA_STYLE + url + EXTRA_STYLE_AFTER;
+		}
+		return "";
+	}
 
 	public static boolean writeToFile(String fileName, int year, String month, Day[][] days) {
 		PrintWriter fileOut;
 		try {
 			fileOut = new PrintWriter(new FileWriter(fileName, false));
-
-			// filename = 'Mohr_' + month[0:3] + '_' + month2[0:3] + '_' + yearstr +
-			// '_Schedule.html'
-
 			fileOut.print("<html>\n");
 			fileOut.print("<head>\n");
-			String monthHeader = "<title>" + month + " " + year;
-			fileOut.print(monthHeader);
+			fileOut.print("<title>" + month + " " + year);
 			fileOut.print("</title>\n");
 			fileOut.print("<style type=\"text/css\">\n");
 			fileOut.print("th, td { padding:1px; padding-right: 20px; width: 230px; font-weight: bold;font-size: 18px; vertical-align: top;}\n");
@@ -35,8 +43,7 @@ public class HtmlWriter {
 			fileOut.print("\n<body>\n");
 
 			fileOut.print("<h2>Noon Supervisors Schedule</h2>\n");
-			monthHeader = "<h2>" + month + " " + year;
-			fileOut.print(monthHeader);
+			fileOut.print("<h2>" + month + " " + year);
 			fileOut.print("</h2>\n");
 
 			fileOut.print("<table border=\"1\">\n");
@@ -46,7 +53,7 @@ public class HtmlWriter {
 			String lastprinted = "";
 			for (int week = 0; week < days.length; week++) {
 				for (int day = 0; day < days[week].length; day++) {
-					fileOut.print("\t<td> ");
+					fileOut.print("\t<td" + addExtra(year, month, week, day) + "> ");
 					fileOut.print(days[week][day].getOfficialDate() + " ");
 					if (!lastprinted.equals(days[week][day].getMonth())) {
 						fileOut.print(days[week][day].getMonth());
