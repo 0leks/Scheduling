@@ -3,11 +3,11 @@
 
 @rem certutil -hashfile scheduling.exe SHA512 | find /i /v "sha512" | find /i /v "certutil" > latest.textfile
 @rem certutil -hashfile schedulinglauncher.exe SHA512 | find /i /v "sha512" | find /i /v "certutil" >> latest.textfile
-powershell "Compress-Archive -Force -Path schedulingjre schedulingjre.zip"
+@rem powershell "Compress-Archive -Force -Path schedulingjre schedulingjre.zip"
 python get_hashes.py
 
 java -jar w:\Launcher\SignTool.jar -sign scheduling.exe privatekey
-java -jar w:\Launcher\SignTool.jar -sign schedulingjre.zip privatekey
+@rem java -jar w:\Launcher\SignTool.jar -sign schedulingjre.zip privatekey
 java -jar w:\Launcher\SignTool.jar -sign latesthashes.textfile privatekey
 
 @rem ren Scheduling.exe Scheduling%1.exe
