@@ -34,7 +34,7 @@ public class HtmlWriter {
 
 			fileOut.print("\n<body>\n");
 
-			fileOut.print("<h2>Noon Supervisor Schedule</h2>\n");
+			fileOut.print("<h2>Noon Supervisors Schedule</h2>\n");
 			monthHeader = "<h2>" + month + " " + year;
 			fileOut.print(monthHeader);
 			fileOut.print("</h2>\n");
@@ -46,24 +46,22 @@ public class HtmlWriter {
 			String lastprinted = "";
 			for (int week = 0; week < days.length; week++) {
 				for (int day = 0; day < days[week].length; day++) {
-					fileOut.print("<td>\n");
-					fileOut.print("\t" + days[week][day].getOfficialDate() + " ");
+					fileOut.print("\t<td> ");
+					fileOut.print(days[week][day].getOfficialDate() + " ");
 					if (!lastprinted.equals(days[week][day].getMonth())) {
 						fileOut.print(days[week][day].getMonth());
 						lastprinted = days[week][day].getMonth();
 					}
-					fileOut.print("\n");
+					fileOut.print(" ");
 
 					if (days[week][day].isHoliday()) {
-						fileOut.print("\t<ul>\n");
-						fileOut.print("\t\t" + days[week][day].getText());
-						fileOut.print("\t</ul>\n");
+						fileOut.print("<ul> " + days[week][day].getText() + "</ul> ");
 					} else if (!days[week][day].isUnused()) {
-						fileOut.print("\t<ol>\n");
+						fileOut.print("<ol> ");
 						List<Employee> assigned = days[week][day].getAssignments();
 						for (int position = 0; position < assigned.size(); position++) {
 							Employee e = assigned.get(position);
-							fileOut.print("\t\t<li>");
+							fileOut.print("<li>");
 							fileOut.print(e.getName());
 							position++;
 							if (assigned.size() > position) {
@@ -72,9 +70,9 @@ public class HtmlWriter {
 									fileOut.print(", " + b.getName());
 								}
 							}
-							fileOut.print("</li>\n");
+							fileOut.print("</li> ");
 						}
-						fileOut.print("\t</ol>\n");
+						fileOut.print("</ol> ");
 					}
 
 					fileOut.print("</td>\n");

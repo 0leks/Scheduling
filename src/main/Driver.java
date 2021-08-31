@@ -54,6 +54,8 @@ public class Driver {
   private int monthNumber;
   private String monthName;
   private int year;
+  
+  private boolean customEdits = false;
 
   private List<Employee> employees = new ArrayList<>();
 
@@ -82,7 +84,7 @@ public class Driver {
 	}
 
 	private void initializeFrame() {
-		frame = new JFrame("Scheduling 2.0.4");
+		frame = new JFrame("Scheduling 2.0.5");
 		Dimension screensize = Toolkit.getDefaultToolkit().getScreenSize();
 		Dimension appsize = new Dimension(screensize.width * 9 / 10, screensize.height * 9 / 10);
 		frame.setSize(appsize);
@@ -185,6 +187,17 @@ public class Driver {
 	}
 
 	private void generateButtonPressed() {
+		if(customEdits) {
+			int response = JOptionPane.showConfirmDialog(
+                         frame, 
+                         "You have made some custom edits.\n" +
+                         "Are you sure you would like to overwrite your changes?",
+                         "Discard changes?",
+                         JOptionPane.OK_CANCEL_OPTION);
+			if(response != JOptionPane.OK_OPTION) {
+				return;
+			}
+		}
 		System.err.println(days[0].length + " positions");
 		applyHolidays();
 		Assigner assigner = new Assigner();
@@ -196,6 +209,7 @@ public class Driver {
 		Day[][] newDays = assigner.generateSchedule(days, employees);
 		if (days != null) {
 			days = newDays;
+			customEdits = false;
 		}
 		frame.repaint();
 	}
@@ -561,9 +575,9 @@ public class Driver {
                 if(days[week][day].getAssignments().size() > index) {
                   toDraw1 += " " + days[week][day].getAssignments().get(index).getName();
                 }
-                if(days[week][day].getAssignments().size() > index+1) {
-                  toDraw1 += ", " + days[week][day].getAssignments().get(index + 1).getName();
-                }
+//                if(days[week][day].getAssignments().size() > index+1) {
+//                  toDraw1 += ", " + days[week][day].getAssignments().get(index + 1).getName();
+//                }
                 g.drawString(toDraw1, cellx + 3, ypos);
               
               }
@@ -629,6 +643,7 @@ public class Driver {
           int choice = JOptionPane.showOptionDialog(frame, editPanel, "Edit Day", JOptionPane.YES_NO_OPTION,
               JOptionPane.INFORMATION_MESSAGE, null, options, null);
           if( choice == 0 ) {
+        	customEdits = true;
             String[] newAssignments = editPanel.getAssignments();
             days[weekpressed][daypressed].clearAssignments();
             for( int i = 0; i < newAssignments.length; i++ ) {
