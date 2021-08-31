@@ -187,19 +187,10 @@ public class Driver {
 	}
 
 	private void generateButtonPressed() {
-		if(customEdits) {
-			int response = JOptionPane.showConfirmDialog(
-                         frame, 
-                         "You have made some custom edits.\n" +
-                         "Are you sure you would like to overwrite your changes?",
-                         "Discard changes?",
-                         JOptionPane.OK_CANCEL_OPTION);
-			if(response != JOptionPane.OK_OPTION) {
-				return;
-			}
-		}
-		System.err.println(days[0].length + " positions");
 		applyHolidays();
+		if(!loseChangesConfirmPrompt()) {
+			return;
+		}
 		Assigner assigner = new Assigner();
 		String possibleString = assigner.checkIfPossible(days, employees);
 		if (possibleString != null) {
@@ -215,8 +206,26 @@ public class Driver {
 	}
 	private void shiftMonth(int delta) {
 		applyHolidays();
+		if(!loseChangesConfirmPrompt()) {
+			return;
+		}
 		monthOffset += delta;
 		setUpCalendar();
+	}
+	
+	/** @return true if user okays losing the changes 
+	 * or there are no custom edits. Otherwise false. */
+	private boolean loseChangesConfirmPrompt() {
+		if(!customEdits) {
+			return true;
+		}
+		int response = JOptionPane.showConfirmDialog(
+                     frame, 
+                     "You have made some custom edits.\n" +
+                     "Are you sure you would like to overwrite your changes?",
+                     "Discard changes?",
+                     JOptionPane.OK_CANCEL_OPTION);
+		return response == JOptionPane.OK_OPTION;
 	}
 
   public void switchtoMainPanel() {
@@ -457,6 +466,7 @@ public class Driver {
       }
     }
     days = newDays;
+    customEdits = false;
 	frame.repaint();
   }
   
