@@ -47,31 +47,34 @@ public class HtmlWriter {
 			for (int week = 0; week < days.length; week++) {
 				for (int day = 0; day < days[week].length; day++) {
 					fileOut.print("<td>\n");
-					fileOut.print(days[week][day].getOfficialDate() + " ");
+					fileOut.print("\t" + days[week][day].getOfficialDate() + " ");
 					if (!lastprinted.equals(days[week][day].getMonth())) {
 						fileOut.print(days[week][day].getMonth());
 						lastprinted = days[week][day].getMonth();
 					}
+					fileOut.print("\n");
 
 					if (days[week][day].isHoliday()) {
-						fileOut.print("<ul>\n");
-						fileOut.print(days[week][day].getText());
-						fileOut.print("</ul>\n");
+						fileOut.print("\t<ul>\n");
+						fileOut.print("\t\t" + days[week][day].getText());
+						fileOut.print("\t</ul>\n");
 					} else if (!days[week][day].isUnused()) {
-						fileOut.print("<ol>\n");
+						fileOut.print("\t<ol>\n");
 						List<Employee> assigned = days[week][day].getAssignments();
 						for (int position = 0; position < assigned.size(); position++) {
 							Employee e = assigned.get(position);
-							fileOut.print("<li>");
+							fileOut.print("\t\t<li>");
 							fileOut.print(e.getName());
 							position++;
 							if (assigned.size() > position) {
 								Employee b = assigned.get(position);
-								fileOut.print(", " + b.getName());
+								if(!b.getName().equals("")) {
+									fileOut.print(", " + b.getName());
+								}
 							}
 							fileOut.print("</li>\n");
 						}
-						fileOut.print("</ol>\n");
+						fileOut.print("\t</ol>\n");
 					}
 
 					fileOut.print("</td>\n");
