@@ -84,7 +84,7 @@ public class Driver {
 	}
 
 	private void initializeFrame() {
-		frame = new JFrame("Scheduling 2.0.5");
+		frame = new JFrame("Scheduling 2.0.6");
 		Dimension screensize = Toolkit.getDefaultToolkit().getScreenSize();
 		Dimension appsize = new Dimension(screensize.width * 9 / 10, screensize.height * 9 / 10);
 		frame.setSize(appsize);

@@ -130,9 +130,9 @@ public class Day {
     return "";
   }
   
+  public static final String[] monthStrings = new String[] { "January", "February", "March", "April", "May", "June", "July", "August",
+		  "September", "October", "November", "December" };
   public static String getNameofMonth(int monthofyear) {
-    String[] monthStrings = new String[] { "January", "February", "March", "April", "May", "June", "July", "August",
-    "September", "October", "November", "December" };
     return monthStrings[monthofyear%monthStrings.length];
   }
   public Day() {
