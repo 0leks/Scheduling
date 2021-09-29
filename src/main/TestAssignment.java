@@ -155,7 +155,7 @@ public class TestAssignment {
   public boolean updateDomains(Edge[] edges) {
     for( int b = 0; b < edges.length; b++ ) {
       for( int a = 0; a < edges.length; a++ ) {
-        if( edges[a].updateDomains() ) {
+        if( edges[a].updateVariables() ) {
           return true;
         }
       }

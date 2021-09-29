@@ -3,14 +3,13 @@ package ok.schedule;
 import java.io.*;
 import java.util.*;
 
-import javax.swing.*;
-
 import main.*;
 
 public class HtmlWriter {
 	private static final String EXTRA_STYLE = " style=\"background-color: rgba(255,255,255,0.45); background-blend-mode: lighten; background-position: right; background-size: contain; background-repeat: no-repeat; background-image: url(";
 	private static final String EXTRA_STYLE_AFTER = ")\" ";
 	private static String addExtra(int year, String month, int week, int day) {
+		// TODO add new year, thanksgiving, st patrick, valentine, 4th of july
 		String url = null;
 		if((year == 2021 && month.equals("October") && week == 4 && day == 4)
 			|| (year == 2022 && month.equals("October") && week == 4 && day == 0)) {

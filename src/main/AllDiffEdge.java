@@ -1,8 +1,5 @@
 package main;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class AllDiffEdge extends Edge {
   
   public AllDiffEdge(String name) {
@@ -14,7 +11,7 @@ public class AllDiffEdge extends Edge {
    * @return true if a domain was reduced to size 0
    */
   @Override
-  public boolean updateDomains() {
+  public boolean updateVariables() {
     for( Variable v : variables ) {
       if( v.isAssigned() ) {
         

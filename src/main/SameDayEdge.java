@@ -9,7 +9,7 @@ public class SameDayEdge extends Edge {
   }
 
   @Override
-  public boolean updateDomains() {
+  public boolean updateVariables() {
     
     return false;
   }

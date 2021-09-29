@@ -21,7 +21,7 @@ public abstract class Edge {
    * 
    * @return true if a domain was reduced to size 0
    */
-  public abstract boolean updateDomains();
+  public abstract boolean updateVariables();
 
   @Override
   public String toString() {
