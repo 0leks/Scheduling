@@ -1,4 +1,4 @@
-package ok.schedule;
+package ok.schedule.model;
 
 public class Employee {
 	private static int idcounter = 0;
@@ -63,7 +63,7 @@ public class Employee {
   
 	@Override
 	public int hashCode() {
-	    return 257 * id;
+	    return 7877 * id;
 	}
 
 	@Override

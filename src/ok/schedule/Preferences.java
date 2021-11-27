@@ -10,6 +10,8 @@ import java.util.Scanner;
 
 import javax.swing.JOptionPane;
 
+import ok.schedule.model.Employee;
+
 public class Preferences {
   
   private static PrintWriter fileOut;

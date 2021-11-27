@@ -1,9 +1,9 @@
-package ok.schedule;
+package ok.schedule.model;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import ok.schedule.*;
+import ok.schedule.Utils;
 
 public class Day {
 
@@ -26,7 +26,7 @@ public class Day {
     this.text = "";
     this.officialDate = officialDate;
     this.id = id;
-    blank = false;
+    this.blank = false;
   }
   
   public Day(Day day) {
@@ -35,6 +35,13 @@ public class Day {
     this.setYear(day.getYear());
     this.holiday = day.holiday;
     this.setText(day.getText());
+  }
+
+  public Day() {
+    this.blank = true;
+    this.text = "";
+    this.name = "blank";
+    this.month = "MONTH";
   }
   
   public Day(int dayofweek, int officialDate, int id) {
@@ -89,13 +96,6 @@ public class Day {
     return id;
   }
   
-  public Day() {
-    blank = true;
-    this.text = "";
-    this.name = "blank";
-    this.month = "MONTH";
-  }
-  
   public void setMonth(int month) {
     this.month = Utils.getNameofMonth(month);
   }
@@ -117,5 +117,4 @@ public class Day {
   public String getText() {
     return text;
   }
-  
 }

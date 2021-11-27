@@ -10,6 +10,8 @@ import java.util.*;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
+import ok.schedule.model.Day;
+
 public class Utils {
   
   public static final String[] monthStrings = new String[] { "January", "February", "March", "April", "May", "June", "July", "August",

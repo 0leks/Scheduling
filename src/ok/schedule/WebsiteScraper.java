@@ -7,6 +7,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import ok.schedule.model.Day;
+
 public class WebsiteScraper {
   
   private static final String schoolCalendarQuery = "https://mohr.pleasantonusd.net/apps/events/%d/%d/?id=0";
