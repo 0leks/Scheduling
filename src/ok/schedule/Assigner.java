@@ -166,9 +166,6 @@ public class Assigner {
 					for (Employee e : assignments[day][position].employees) {
 						days[week][day].assign(e);
 					}
-					for (int extra = 0; extra < 2 - assignments[day][position].employees.size(); extra++) {
-						days[week][day].assign(new Employee(""));
-					}
 				}
 			}
 		}

@@ -348,7 +348,7 @@ public class Driver {
         return;
       }
       Day day = calendar.days[weekpressed][daypressed];
-      EditDayPanel editPanel = new EditDayPanel(calendar.days[weekpressed][daypressed]);
+      EditDayPanel editPanel = new EditDayPanel(day);
       
       Object[] options = {};
       int choice = JOptionPane.showOptionDialog(frame, editPanel, "Editing " + day.getMonth() + " " + day.getOfficialDate(), JOptionPane.OK_OPTION,

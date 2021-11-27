@@ -94,11 +94,11 @@ public class ViewPanel extends JPanel {
             g.drawString("Holiday", cellx + cellwidth - 2 - g.getFontMetrics().stringWidth("Holiday"), celly + cellheight-4);
           }
           else if( !calendar.days[week][day].isUnused() && calendar.days[week][day].hasAssignments() ) {
-            for( int index = 0; index < calendar.days[week][day].getAssignments().size(); index+=2 ) {
+            for( int index = 0; index < calendar.days[week][day].getAssignments().size(); index++ ) {
               g.setColor(Color.black);
               g.setFont(employeeFont);
-              int ypos = celly + TINY_FONT.getSize() + employeeFont.getSize() + 4 + index/2 * (employeeFont.getSize()+4);
-              String toDraw1 = (1 + index/2) + "";
+              int ypos = celly + TINY_FONT.getSize() + employeeFont.getSize() + 4 + index * (employeeFont.getSize()+4);
+              String toDraw1 = (1 + index) + "";
               if(calendar.days[week][day].getAssignments().size() > index) {
                 toDraw1 += " " + calendar.days[week][day].getAssignments().get(index).getName();
               }
