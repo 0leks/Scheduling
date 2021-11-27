@@ -153,6 +153,8 @@ public class Driver {
 		rightShift.setFont(MAIN_FONT);
 		leftShift.addActionListener(e -> shiftMonth(-1));
 		rightShift.addActionListener(e -> shiftMonth(1));
+		leftShift.setFocusable(false);
+		rightShift.setFocusable(false);
 		timeframe.add(leftShift);
 		timeframe.add(Box.createRigidArea(new Dimension(Constants.BUTTON_PADDING, 0)));
 		timeframe.add(rightShift);
@@ -161,15 +163,18 @@ public class Driver {
     editEmployees.setFont(MAIN_FONT);
     editEmployees.setMaximumSize(new Dimension(BIG_NUMBER, 0));
     editEmployees.addActionListener(e -> switchtoEditPanel());
+    editEmployees.setFocusable(false);
     generateButton = new JButton("Generate");
     generateButton.setFont(MAIN_FONT);
     generateButton.setMaximumSize(new Dimension(BIG_NUMBER, 0));
     generateButton.addActionListener(e -> generateButtonPressed());
+    generateButton.setFocusable(false);
 
     save = new JButton("Save", Utils.loadImageIconResource("/save_icon.png", 32, 32));
     save.setFont(MAIN_FONT);
     save.setMaximumSize(new Dimension(BIG_NUMBER, 0));
     save.addActionListener(e -> writeToFile());
+    save.setFocusable(false);
     
     buttonPanel.add(Box.createVerticalGlue());
     buttonPanel.add(monthLabel);

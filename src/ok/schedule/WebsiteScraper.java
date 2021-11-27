@@ -37,7 +37,7 @@ public class WebsiteScraper {
           continue;
         }
         for(Element titleElem : headline.select(".event-title")) {
-          String eventTitle = titleElem.text();
+          String eventTitle = titleElem.text().trim();
           String lowered = eventTitle.toLowerCase();
           if (lowered.contains("spirit friday")) {
             continue;
@@ -48,7 +48,7 @@ public class WebsiteScraper {
               date, 
               dayDateBox.selectFirst(".day").text(),
               eventTitle);
-          day.setText(day.getText() + " " +eventTitle);
+          day.setText(day.getText() + " " + eventTitle);
           day.setIsHoliday(day.isHoliday() || isHoliday);
           System.out.println("updated day: " + day.getText());
         }

@@ -52,10 +52,10 @@ public class EmployeeView {
     employeePanel.setLayout(new BoxLayout(employeePanel, BoxLayout.PAGE_AXIS));
     employeePanel.setBackground(COLOR_LIGHT_BACKGROUND);
     employeePanel.setBorder(BorderFactory.createEmptyBorder(BUTTON_PADDING, BUTTON_PADDING, BUTTON_PADDING, BUTTON_PADDING));
-  employeePanel.add(Box.createVerticalGlue());
+    employeePanel.add(Box.createVerticalGlue());
     for (Employee e : roster.employees) {
-    addedEmployee(e);
-  }
+      addedEmployee(e);
+    }
     employeePane = new JScrollPane(employeePanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
                                 JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
@@ -63,11 +63,12 @@ public class EmployeeView {
     JButton newEmployeeButton = new JButton("New Employee", icon);
     newEmployeeButton.setFont(MAIN_FONT);
     newEmployeeButton.addActionListener(e -> addButtonPressed());
+    newEmployeeButton.setFocusable(false);
     JButton backButton = new JButton("Back");
     backButton.setFont(MAIN_FONT);
     backButton.addActionListener(e -> backButtonCallback.run());
-    AffineTransform affinetransform = new AffineTransform();     
-    FontRenderContext frc = new FontRenderContext(affinetransform,true,true);  
+    backButton.setFocusable(false);
+    FontRenderContext frc = new FontRenderContext(null,true,true);  
     int maxSize = 100 + (int)MAIN_FONT.getStringBounds(newEmployeeButton.getText(), frc).getWidth();
     newEmployeeButton.setMaximumSize(new Dimension(maxSize, 0));
     backButton.setMaximumSize(new Dimension(maxSize, 0));
