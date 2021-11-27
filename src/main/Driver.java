@@ -569,10 +569,13 @@ public class Driver {
             g.setFont(TINY_FONT);
             g.drawString(days[week][day].getOfficialDate() + " " + days[week][day].getName(), cellx + 3, celly + TINY_FONT.getSize() + 2);
             g.drawString(days[week][day].getMonth() + " " + days[week][day].getYear(), cellx + 3, celly + cellheight-4);
+            g.setColor(Color.black);
+            g.setFont(MEDIUM_FONT);
+            g.drawString(days[week][day].getText(), cellx + cellwidth - g.getFontMetrics().stringWidth(days[week][day].getText()) - 2, celly + TINY_FONT.getSize() + 2);
             if (days[week][day].isHoliday()) {
-              g.setColor(Color.black);
-              g.setFont(MEDIUM_FONT);
-              g.drawString(days[week][day].getText(), cellx + 3, celly + 2 * TINY_FONT.getSize() + 8);
+              g.setColor(Color.GRAY);
+              g.setFont(TINY_FONT);
+              g.drawString("Holiday", cellx + cellwidth - 2 - g.getFontMetrics().stringWidth("Holiday"), celly + cellheight-4);
             }
             else if( !days[week][day].isUnused() && days[week][day].hasAssignments() ) {
               for( int index = 0; index < days[week][day].getAssignments().size(); index+=2 ) {
@@ -627,27 +630,18 @@ public class Driver {
       int daypressed = e.getX() / viewPanel.getCellWidth();
       int weekpressed = e.getY() / viewPanel.getCellHeight();
       if( weekpressed >= 0 && weekpressed < days.length ) {
-        if( e.getButton() == MouseEvent.BUTTON1 ) {
-          days[weekpressed][daypressed].toggleHoliday();
-          if (days[weekpressed][daypressed].isHoliday()) {
-            applyHolidays();
-            days[weekpressed][daypressed].setText("");
-            HolidayField field = viewPanel.addHolidayField(weekpressed, daypressed, previousHolidayName);
-            field.setHorizontalAlignment(JTextField.CENTER);
-            field.setBackground(COLOR_TEXTFIELD);
-            days[weekpressed][daypressed].setHolidayField(field);
-            field.selectAll();
-            field.requestFocus();
-          } else {
-            days[weekpressed][daypressed].removeTextField();
-//            if( days[weekpressed][daypressed].getHolidayField() != null ) {
-//              viewPanel.remove(days[weekpressed][daypressed].getTextField());
-//            }
-//            days[weekpressed][daypressed].setHolidayField(null);
-          }
-          frame.repaint();
-        }
-        else if( e.getButton() == MouseEvent.BUTTON3 ) {
+//        if( e.getButton() == MouseEvent.BUTTON1 ) {
+//          applyHolidays();
+//          days[weekpressed][daypressed].setText("");
+//          HolidayField field = viewPanel.addHolidayField(weekpressed, daypressed, previousHolidayName);
+//          field.setHorizontalAlignment(JTextField.CENTER);
+//          field.setBackground(COLOR_TEXTFIELD);
+//          days[weekpressed][daypressed].setHolidayField(field);
+//          field.selectAll();
+//          field.requestFocus();
+//          frame.repaint();
+//        }
+//        else if( e.getButton() == MouseEvent.BUTTON3 ) {
           EditDayPanel editPanel = new EditDayPanel(days[weekpressed][daypressed]);
           Object[] options = {"Confirm", "Cancel" };
           int choice = JOptionPane.showOptionDialog(frame, editPanel, "Edit Day", JOptionPane.YES_NO_OPTION,
@@ -660,7 +654,7 @@ public class Driver {
               days[weekpressed][daypressed].assign(new Employee(newAssignments[i]));
             }
             frame.repaint();
-          }
+//          }
         }
       }
 	}

@@ -87,10 +87,10 @@ public class HtmlWriter {
 						fileOut.print(days[week][day].getMonth());
 						lastprinted = days[week][day].getMonth();
 					}
-					fileOut.print(" ");
+					fileOut.print(" " + days[week][day].getText());
 
 					if (days[week][day].isHoliday()) {
-						fileOut.print("<ul> " + days[week][day].getText() + "</ul> ");
+//						fileOut.print("<ul> " + days[week][day].getText() + "</ul> ");
 					} else if (!days[week][day].isUnused()) {
 						fileOut.print("<ol> ");
 						List<Employee> assigned = days[week][day].getAssignments();

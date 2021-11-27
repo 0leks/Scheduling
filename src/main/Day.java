@@ -86,6 +86,9 @@ public class Day {
   public void toggleHoliday() {
     holiday = !holiday;
   }
+  public void setIsHoliday(boolean isHoliday) {
+    holiday = isHoliday;
+  }
   public boolean isUnused() {
     return unused; 
   }
