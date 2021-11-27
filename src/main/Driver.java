@@ -1,17 +1,49 @@
 package main;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.awt.font.*;
-import java.awt.geom.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.GraphicsEnvironment;
+import java.awt.Toolkit;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.font.FontRenderContext;
+import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 
-import javax.swing.*;
+import javax.imageio.ImageIO;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import javax.swing.UIManager;
 
-import ok.launcher.*;
-import ok.schedule.*;
+import ok.launcher.Updater;
+import ok.schedule.EditDayPanel;
+import ok.schedule.EmployeeRowPanel;
+import ok.schedule.HolidayField;
+import ok.schedule.HtmlWriter;
 import ok.schedule.Utils;
 
 public class Driver {
@@ -622,6 +654,20 @@ public class Driver {
 	}
 
 	public static void main(String[] args) {
+	  String fonts[] = GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
+	  int size = 20;
+	  BufferedImage image = new BufferedImage(200, (size+1)*fonts.length, BufferedImage.TYPE_BYTE_GRAY);
+	  Graphics2D g = image.createGraphics();
+    for (int i = 0; i < fonts.length; i++) {
+        g.setFont(new Font(fonts[i], Font.PLAIN, 20));
+        g.drawString(fonts[i], 2, (i+1)*20);
+    }
+    g.dispose();
+    try {
+      ImageIO.write(image, "png", new File("fonts.png"));
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
 		// new TestAssignment(null);
 		new Driver().run();
 	}
@@ -629,34 +675,22 @@ public class Driver {
 	private void viewPanelMousePressed(MouseEvent e) {
       int daypressed = e.getX() / viewPanel.getCellWidth();
       int weekpressed = e.getY() / viewPanel.getCellHeight();
-      if( weekpressed >= 0 && weekpressed < days.length ) {
-//        if( e.getButton() == MouseEvent.BUTTON1 ) {
-//          applyHolidays();
-//          days[weekpressed][daypressed].setText("");
-//          HolidayField field = viewPanel.addHolidayField(weekpressed, daypressed, previousHolidayName);
-//          field.setHorizontalAlignment(JTextField.CENTER);
-//          field.setBackground(COLOR_TEXTFIELD);
-//          days[weekpressed][daypressed].setHolidayField(field);
-//          field.selectAll();
-//          field.requestFocus();
-//          frame.repaint();
-//        }
-//        else if( e.getButton() == MouseEvent.BUTTON3 ) {
-          EditDayPanel editPanel = new EditDayPanel(days[weekpressed][daypressed]);
-          Object[] options = {"Confirm", "Cancel" };
-          int choice = JOptionPane.showOptionDialog(frame, editPanel, "Edit Day", JOptionPane.YES_NO_OPTION,
-              JOptionPane.INFORMATION_MESSAGE, null, options, null);
-          if( choice == 0 ) {
-        	customEdits = true;
-            String[] newAssignments = editPanel.getAssignments();
-            days[weekpressed][daypressed].clearAssignments();
-            for( int i = 0; i < newAssignments.length; i++ ) {
-              days[weekpressed][daypressed].assign(new Employee(newAssignments[i]));
-            }
-            frame.repaint();
-//          }
-        }
+      if( weekpressed < 0 || weekpressed >= days.length ) {
+        return;
       }
+      Day day = days[weekpressed][daypressed];
+      EditDayPanel editPanel = new EditDayPanel(days[weekpressed][daypressed]);
+      
+      Object[] options = {};
+      int choice = JOptionPane.showOptionDialog(frame, editPanel, "Editing " + day.getMonth() + " " + day.getOfficialDate(), JOptionPane.OK_OPTION,
+          JOptionPane.INFORMATION_MESSAGE, null, options, null);
+      customEdits = true;
+      String[] newAssignments = editPanel.getAssignments();
+      days[weekpressed][daypressed].clearAssignments();
+      for( int i = 0; i < newAssignments.length; i++ ) {
+        days[weekpressed][daypressed].assign(new Employee(newAssignments[i]));
+      }
+      frame.repaint();
 	}
 
 	public int getDrawY(int index) {
