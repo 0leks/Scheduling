@@ -1,4 +1,4 @@
-package main;
+package ok.schedule;
 
 import java.util.*;
 

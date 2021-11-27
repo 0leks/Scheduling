@@ -10,9 +10,33 @@ import java.util.*;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
-import main.*;
-
 public class Utils {
+  
+  public static final String[] monthStrings = new String[] { "January", "February", "March", "April", "May", "June", "July", "August",
+      "September", "October", "November", "December" };
+  public static String getNameofMonth(int monthofyear) {
+    return monthStrings[monthofyear%monthStrings.length];
+  }
+  
+  public static String getNameofDay(int dayofweek) {
+    if( dayofweek == 0 ) {
+      return "Monday";
+    }
+    else if( dayofweek == 1 ) {
+      return "Tuesday";
+    }
+    else if( dayofweek == 2 ) {
+      return "Wednesday";
+    }
+    else if( dayofweek == 3 ) {
+      return "Thursday";
+    }
+    else if( dayofweek == 4 ) {
+      return "Friday";
+    }
+    return "unknown";
+  }
+  
   public static Day getDayByDate(Day[][] days, int date) {
     for (int week = 0; week < days.length; week++) {
       for (int day = 0; day < days[week].length; day++) {
@@ -63,4 +87,5 @@ public class Utils {
       e.printStackTrace();
     }
 	}
+	
 }

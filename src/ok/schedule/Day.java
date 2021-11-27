@@ -1,9 +1,7 @@
-package main;
+package ok.schedule;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.swing.JTextField;
 
 import ok.schedule.*;
 
@@ -15,8 +13,6 @@ public class Day {
   
   private boolean holiday;
   private boolean unused;
-  
-  private HolidayField field;
   
   private int officialDate;
   private int id;
@@ -42,7 +38,7 @@ public class Day {
   }
   
   public Day(int dayofweek, int officialDate, int id) {
-    this(getNameofDay(dayofweek), officialDate, id);
+    this(Utils.getNameofDay(dayofweek), officialDate, id);
   }
   
   public void clearAssignments() {
@@ -65,27 +61,6 @@ public class Day {
     assignments.add(e);
   }
   
-  public void removeTextField() {
-    if( field != null ) {
-      field.remove();
-    }
-  }
-  public void absorbTextField() {
-    if( field != null ) {
-      field.applyAndRemove();
-    }
-  }
-  
-  public HolidayField getHolidayField() {
-    return field;
-  }
-  
-  public void setHolidayField(HolidayField field) {
-    this.field = field;
-  }
-  public void toggleHoliday() {
-    holiday = !holiday;
-  }
   public void setIsHoliday(boolean isHoliday) {
     holiday = isHoliday;
   }
@@ -114,30 +89,6 @@ public class Day {
     return id;
   }
   
-  public static String getNameofDay(int dayofweek) {
-    if( dayofweek == 0 ) {
-      return "Monday";
-    }
-    else if( dayofweek == 1 ) {
-      return "Tuesday";
-    }
-    else if( dayofweek == 2 ) {
-      return "Wednesday";
-    }
-    else if( dayofweek == 3 ) {
-      return "Thursday";
-    }
-    else if( dayofweek == 4 ) {
-      return "Friday";
-    }
-    return "";
-  }
-  
-  public static final String[] monthStrings = new String[] { "January", "February", "March", "April", "May", "June", "July", "August",
-		  "September", "October", "November", "December" };
-  public static String getNameofMonth(int monthofyear) {
-    return monthStrings[monthofyear%monthStrings.length];
-  }
   public Day() {
     blank = true;
     this.text = "";
@@ -146,7 +97,7 @@ public class Day {
   }
   
   public void setMonth(int month) {
-    this.month = getNameofMonth(month);
+    this.month = Utils.getNameofMonth(month);
   }
   
   public String getMonth() {

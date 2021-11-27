@@ -8,8 +8,6 @@ import javax.swing.border.TitledBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import main.*;
-
 public class EditDayPanel extends JPanel {
   private static final Font font = new Font("Comic Sans MS", Font.PLAIN, 18);
   private static final Font smallFont = new Font("Comic Sans MS", Font.PLAIN, 12);

@@ -4,8 +4,6 @@ import java.awt.*;
 
 import javax.swing.*;
 
-import main.*;
-
 public class EmployeeRowPanel extends JPanel {
 	
 	public static final int MIN_WIDTH = 700;
@@ -47,7 +45,7 @@ public class EmployeeRowPanel extends JPanel {
 			if (employee.available(day)) {
 				g.setColor(Color.black);
 				g.setFont(Driver.TINY_FONT);
-				g.drawString(Day.getNameofDay(day), x + 5, (int) (Driver.MEDIUM_FONT.getSize() * 1.5));
+				g.drawString(Utils.getNameofDay(day), x + 5, (int) (Driver.MEDIUM_FONT.getSize() * 1.5));
 			}
 			if (employee.isPositionLocked(day)) {
 				g.setColor(Color.black);

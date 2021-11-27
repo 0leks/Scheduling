@@ -3,8 +3,6 @@ package ok.schedule;
 import java.io.*;
 import java.util.*;
 
-import main.*;
-
 public class HtmlWriter {
 	private static final String JACKOLANTERN = "http://clipart-library.com/images/pc58gx99i.png";
 	private static final String SPARKLER = "http://clipart-library.com/image_gallery/284123.png";
@@ -20,7 +18,7 @@ public class HtmlWriter {
 		String url = null;
 		HashMap<String, HashMap<Integer, String>> events = new HashMap<>();
 		
-		for(String monthName : Day.monthStrings) {
+		for(String monthName : Utils.monthStrings) {
 			events.put(monthName, new HashMap<>());
 		}
 		

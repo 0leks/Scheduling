@@ -1,4 +1,4 @@
-package main;
+package ok.schedule;
 
 public class Employee {
 	private static int idcounter = 0;

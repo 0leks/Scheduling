@@ -1,4 +1,4 @@
-package main;
+package ok.schedule;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -47,12 +47,6 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import ok.launcher.Updater;
-import ok.schedule.EditDayPanel;
-import ok.schedule.EmployeeRowPanel;
-import ok.schedule.HolidayField;
-import ok.schedule.HtmlWriter;
-import ok.schedule.Utils;
-import ok.schedule.WebsiteScraper;
 
 public class Driver {
 	
@@ -125,7 +119,7 @@ public class Driver {
 	}
 
 	private void initializeFrame() {
-		frame = new JFrame("Scheduling 2.0.6");
+		frame = new JFrame("Scheduling 2.0.7");
 		Dimension screensize = Toolkit.getDefaultToolkit().getScreenSize();
 		Dimension appsize = new Dimension(screensize.width * 9 / 10, screensize.height * 9 / 10);
 		frame.setSize(appsize);
@@ -141,7 +135,7 @@ public class Driver {
 				frame = null;
 			}
 		});
-	    URL iconURL = getClass().getResource("icon.png");
+	    URL iconURL = Driver.class.getResource("/icon.png");
 	    if( iconURL != null ) {
 	      ImageIcon icon = new ImageIcon(iconURL);
 	      frame.setIconImage(icon.getImage());
@@ -217,15 +211,6 @@ public class Driver {
     buttonPanel.add(save);
     buttonPanel.add(Box.createVerticalGlue());
 	    
-//	    Integer[] positionsOptions = new Integer[] { 5, 6, 7, 8, 9, 10, 11, 12};
-//	    JComboBox<Integer> numberPositions = new JComboBox<Integer>(positionsOptions);
-//	    numberPositions.setFont(mainFont);
-//	    numberPositions.setToolTipText("Number of positions per day.");
-//	    numberPositions.addItemListener(e -> {
-//	        Assigner.NUM_POSITIONS = (Integer)numberPositions.getSelectedItem();
-//	    });
-//	    numberPositions.setSelectedIndex(5); // 8 positions is default
-	    
 	    for(Component c : buttonPanel.getComponents()) {
 	    	if(c instanceof JButton) {
 	    		((JButton)c).setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -238,7 +223,6 @@ public class Driver {
 	}
 
 	private void generateButtonPressed() {
-		applyHolidays();
 		if(!loseChangesConfirmPrompt()) {
 			return;
 		}
@@ -256,7 +240,6 @@ public class Driver {
 		frame.repaint();
 	}
 	private void shiftMonth(int delta) {
-		applyHolidays();
 		if(!loseChangesConfirmPrompt()) {
 			return;
 		}
@@ -288,7 +271,7 @@ public class Driver {
     frame.validate();
     frame.repaint();
   }
-  	private void rightClickedEmployeeRowButton(Employee employee, int dayClicked, MouseEvent e) {
+	private void rightClickedEmployeeRowButton(Employee employee, int dayClicked, MouseEvent e) {
 
 		if (dayClicked >= 0 && dayClicked < 5) {
 	  		JPopupMenu rightClickMenu = new JPopupMenu();
@@ -330,23 +313,11 @@ public class Driver {
 			rightClickMenu.add(cancel);
 			rightClickMenu.show(e.getComponent(), e.getX(), e.getY());
 		}
-  	}
-  	private void leftClickedEmployeeRowButton(Employee employee, int dayClicked, MouseEvent e) {
+	}
+	private void leftClickedEmployeeRowButton(Employee employee, int dayClicked, MouseEvent e) {
   		employee.toggleAvailable(dayClicked);
 		Preferences.writeEmployees(employees);
 		frame.repaint();
-  	}
-	private void employeePanelMousePressed(MouseEvent e) {
-		int indexClicked = e.getY() / getEmployeeRowHeight();
-		if (employees.size() > indexClicked) {
-			final int dayClicked = e.getX() / 100 - 2;
-			Employee emp = employees.get(indexClicked);
-			if (e.getButton() == MouseEvent.BUTTON3) {
-				rightClickedEmployeeRowButton(emp, dayClicked, e);
-			} else {
-				leftClickedEmployeeRowButton(emp, dayClicked, e);
-			}
-		}
 	}
 	private void employeeRowPanelMousePressed(MouseEvent e, Employee employee) {
 		final int dayClicked = e.getX() / 100 - 2;
@@ -441,15 +412,6 @@ public class Driver {
     frame.repaint();
   }
 
-
-
-  public void applyHolidays() {
-    for (int week = 0; week < days.length; week++) {
-      for (int day = 0; day < days[week].length; day++) {
-        days[week][day].absorbTextField();
-      }
-    }
-  }
   public void setUpCalendar() {
     int maxNumberWeeks = 5;
     days = new Day[maxNumberWeeks][5]; // TODO
@@ -464,7 +426,7 @@ public class Driver {
     cal.set( Calendar.MONTH, targetMonth );
     
     monthNumber = cal.get(Calendar.MONTH);
-    monthName = Day.getNameofMonth(monthNumber);
+    monthName = Utils.getNameofMonth(monthNumber);
     year = cal.get(Calendar.YEAR);
     
     while( cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY || cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY ) {
@@ -523,11 +485,9 @@ public class Driver {
   }
 
   public class ViewPanel extends JPanel {
-    private int dayHovered;
-    private int monthHovered;
+    private int dayHovered = -1;
+    private int monthHovered = -1;
     public ViewPanel() {
-      dayHovered = -1;
-      monthHovered = -1;
       this.addMouseMotionListener(new MouseMotionAdapter() {
         @Override
         public void mouseMoved(MouseEvent e) {
@@ -548,17 +508,6 @@ public class Driver {
     public void updateHolidayName(String text) {
     	previousHolidayName = text;
     }
-    public HolidayField addHolidayField(int week, int day, String holidayName) {
-
-      HolidayField field = new HolidayField(holidayName, days[week][day], this);
-      field.setFont(MEDIUM_FONT);
-      this.add(field);
-      field.setBounds(day * getCellWidth() + 2, week * getCellHeight() + MEDIUM_FONT.getSize() + 6, getCellWidth() - 4,
-          MEDIUM_FONT.getSize() + 8);
-      field.addKeyListener(field);
-      field.addFocusListener(field);
-      return field;
-    }
 
     public int getCellWidth() {
       return this.getWidth() / 5;
@@ -570,28 +519,19 @@ public class Driver {
 
     @Override
     public void paintComponent(Graphics g) {
-      // 5 days per the week
-      int cellwidth = this.getWidth() / 5;
-      // maximum 5 weeks per month
-      int cellheight = this.getHeight() / 5;
-      
-      
+      int cellwidth = getCellWidth();
+      int cellheight = getCellHeight();
       // leave space for date/day and month/year
       int spacePerName = (int)((cellheight - TINY_FONT.getSize()*3)/(Assigner.NUM_POSITIONS/2 + 1));
-      
       // don't let font size get too small
       spacePerName = Math.max(TINY_FONT.getSize(), spacePerName);
-      
       Font employeeFont = TINY_FONT.deriveFont((float)spacePerName);
       
       g.setColor(COLOR_BACKGROUND);
-      g.fillRect(0, 0, this.getWidth(), this.getHeight());
+//      g.fillRect(0, 0, this.getWidth(), this.getHeight());
       
       for (int week = 0; week < days.length; week++) {
         for (int day = 0; day < days[week].length; day++) {
-//          if( days[week][day].isUnclickable() ) {
-//            continue;
-//          }
           int cellx = cellwidth * day;
           int celly = cellheight * week;
           g.setColor(COLOR_CALENDAR);
@@ -615,8 +555,6 @@ public class Driver {
             }
             else if( !days[week][day].isUnused() && days[week][day].hasAssignments() ) {
               for( int index = 0; index < days[week][day].getAssignments().size(); index+=2 ) {
-                // pos 2 and 5 have 2 people assigned
-                
                 g.setColor(Color.black);
                 g.setFont(employeeFont);
                 int ypos = celly + TINY_FONT.getSize() + employeeFont.getSize() + 4 + index/2 * (employeeFont.getSize()+4);
@@ -624,11 +562,7 @@ public class Driver {
                 if(days[week][day].getAssignments().size() > index) {
                   toDraw1 += " " + days[week][day].getAssignments().get(index).getName();
                 }
-//                if(days[week][day].getAssignments().size() > index+1) {
-//                  toDraw1 += ", " + days[week][day].getAssignments().get(index + 1).getName();
-//                }
                 g.drawString(toDraw1, cellx + 3, ypos);
-              
               }
             }
           }
@@ -640,15 +574,14 @@ public class Driver {
   }
   
 	public void writeToFile() {
-		applyHolidays();
 		String fileName = "Mohr_" + year + "_" + monthName + "_Schedule";
-		String chosenFileName = JOptionPane.showInputDialog(frame, "Choose File Name", fileName);
-		if (chosenFileName == null) {
+		fileName = JOptionPane.showInputDialog(frame, "Choose File Name", fileName);
+		if (fileName == null) {
 			return;
 		}
-		fileName = chosenFileName + ".html";
+		
+		fileName = fileName + ".html";
 		boolean success = HtmlWriter.writeToFile(fileName, year, monthName, days);
-
 		if(success) {
 			JOptionPane.showMessageDialog(frame, "Saved " + fileName);
 		}
@@ -656,11 +589,10 @@ public class Driver {
 			JOptionPane.showMessageDialog(frame, "Failed to save to " + fileName, "ERROR", JOptionPane.ERROR_MESSAGE);
 		}
 	}
-	
 
 	public static void main(String[] args) {
 //	  Utils.makeSampleFonts();
-		// new TestAssignment(null);
+//	  new TestAssignment(null);
 		new Driver().run();
 	}
 
