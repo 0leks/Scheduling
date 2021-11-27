@@ -102,13 +102,6 @@ public class HtmlWriter {
 							Employee e = assigned.get(position);
 							fileOut.print("<li>");
 							fileOut.print(e.getName());
-							position++;
-							if (assigned.size() > position) {
-								Employee b = assigned.get(position);
-								if(!b.getName().equals("")) {
-									fileOut.print(", " + b.getName());
-								}
-							}
 							fileOut.print("</li> ");
 						}
 						fileOut.print("</ol> ");
