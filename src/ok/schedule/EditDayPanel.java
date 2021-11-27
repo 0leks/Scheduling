@@ -14,7 +14,6 @@ import ok.schedule.model.Employee;
 public class EditDayPanel extends JPanel {
   private static final Font font = new Font("Comic Sans MS", Font.PLAIN, 18);
   private static final Font smallFont = new Font("Comic Sans MS", Font.PLAIN, 12);
-	private Day day;
 	private JTextField[] names;
 	private JCheckBox isHolidayCheckBox;
 	private JTextField noteText;
@@ -22,7 +21,6 @@ public class EditDayPanel extends JPanel {
 	private static final int GUI_WIDTH = 160;
 
 	public EditDayPanel(Day day) {
-		this.day = day;
 		
 		noteText = new JTextField(day.getText());
 		noteText.setFont(font);
@@ -54,7 +52,6 @@ public class EditDayPanel extends JPanel {
 		names = new JTextField[Constants.NUM_POSITIONS];
 		List<Employee> assigned = day.getAssignments();
 		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-//		this.setPreferredSize(new Dimension(200, 35 * (Assigner.NUM_POSITIONS/2+2))); // 180
 		for (int i = 0; i < names.length; i++) {
 			String name = "";
 			if (assigned != null && i < assigned.size()) {
@@ -64,7 +61,7 @@ public class EditDayPanel extends JPanel {
 			names[i].setFont(font);
 			JPanel namePanel = new JPanel();
 			namePanel.setLayout(new BorderLayout());
-			JLabel label = new JLabel((i/2+1) + ": ");
+			JLabel label = new JLabel((i+1) + ": ");
 			label.setFont(font);
 			namePanel.add(label, BorderLayout.WEST);
 			namePanel.add(names[i], BorderLayout.CENTER);

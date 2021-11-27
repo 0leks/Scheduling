@@ -55,11 +55,6 @@ public class Driver {
   private JButton generateButton;
   private JButton save;
   private JButton editEmployees;
-
-//  private JPanel employeePanel;
-//  private HashMap<Employee, EmployeeRowPanel> employeeRowPanels = new HashMap<>();
-//  private JPanel editPanel;
-//  private JScrollPane employeePane;
   private EmployeeView employeeView;
 
   private MyCalendar calendar = new MyCalendar();
@@ -76,6 +71,7 @@ public class Driver {
   		Thread updateThread = new Thread(() -> new Updater(projectName).update());
   		updateThread.start();
   	}
+
 	public void run() {
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -316,7 +312,7 @@ public class Driver {
     calendar.days = newDays;
     customEdits = false;
     
-    WebsiteScraper.querySchoolCalendar(calendar.days, year, monthNumber + 1);
+    WebsiteScraper.querySchoolCalendar(calendar, year, monthNumber + 1);
     monthLabel.setText(monthName + " " + year);
     generateButtonPressed();
     frame.repaint();
