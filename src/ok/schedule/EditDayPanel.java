@@ -14,7 +14,8 @@ import ok.schedule.model.Employee;
 public class EditDayPanel extends JPanel {
   private static final Font font = new Font("Comic Sans MS", Font.PLAIN, 18);
   private static final Font smallFont = new Font("Comic Sans MS", Font.PLAIN, 12);
-	private JTextField[] names;
+  private JTextField[] names;
+  private JLabel[] nameLabels;
 	private JCheckBox isHolidayCheckBox;
 	private JTextField noteText;
 	
@@ -46,10 +47,17 @@ public class EditDayPanel extends JPanel {
 		isHolidayCheckBox.addActionListener(e -> {
 		  day.setIsHoliday(isHolidayCheckBox.isSelected());
 		  isHolidayCheckBox.setForeground(isHolidayCheckBox.isSelected() ? Color.black : Color.LIGHT_GRAY);
+		  for(JTextField nameField : names) {
+		    nameField.setEnabled(!isHolidayCheckBox.isSelected());
+		  }
+		  for(JLabel nameLabel : nameLabels) {
+		    nameLabel.setForeground(isHolidayCheckBox.isSelected() ? Color.LIGHT_GRAY : Color.black);
+		  }
 		});
 		this.add(isHolidayCheckBox);
-		
-		names = new JTextField[Constants.NUM_POSITIONS];
+
+    names = new JTextField[Constants.NUM_POSITIONS];
+    nameLabels = new JLabel[Constants.NUM_POSITIONS];
 		List<Employee> assigned = day.getAssignments();
 		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		for (int i = 0; i < names.length; i++) {
@@ -59,11 +67,13 @@ public class EditDayPanel extends JPanel {
 			}
 			names[i] = new JTextField(name);
 			names[i].setFont(font);
+			names[i].setEnabled(!isHolidayCheckBox.isSelected());
 			JPanel namePanel = new JPanel();
 			namePanel.setLayout(new BorderLayout());
-			JLabel label = new JLabel((i+1) + ": ");
-			label.setFont(font);
-			namePanel.add(label, BorderLayout.WEST);
+			nameLabels[i] = new JLabel((i+1) + ": ");
+			nameLabels[i].setFont(font);
+      nameLabels[i].setForeground(isHolidayCheckBox.isSelected() ? Color.LIGHT_GRAY : Color.black);
+			namePanel.add(nameLabels[i], BorderLayout.WEST);
 			namePanel.add(names[i], BorderLayout.CENTER);
 			namePanel.setPreferredSize(new Dimension(GUI_WIDTH, 30));
 			this.add(namePanel);
