@@ -1,11 +1,9 @@
-package main;
+package ok.schedule.model;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.JTextField;
-
-import ok.schedule.*;
+import ok.schedule.Utils;
 
 public class Day {
 
@@ -15,8 +13,6 @@ public class Day {
   
   private boolean holiday;
   private boolean unused;
-  
-  private HolidayField field;
   
   private int officialDate;
   private int id;
@@ -30,7 +26,7 @@ public class Day {
     this.text = "";
     this.officialDate = officialDate;
     this.id = id;
-    blank = false;
+    this.blank = false;
   }
   
   public Day(Day day) {
@@ -40,9 +36,16 @@ public class Day {
     this.holiday = day.holiday;
     this.setText(day.getText());
   }
+
+  public Day() {
+    this.blank = true;
+    this.text = "";
+    this.name = "blank";
+    this.month = "MONTH";
+  }
   
   public Day(int dayofweek, int officialDate, int id) {
-    this(getNameofDay(dayofweek), officialDate, id);
+    this(Utils.getNameofDay(dayofweek), officialDate, id);
   }
   
   public void clearAssignments() {
@@ -65,27 +68,6 @@ public class Day {
     assignments.add(e);
   }
   
-  public void removeTextField() {
-    if( field != null ) {
-      field.remove();
-    }
-  }
-  public void absorbTextField() {
-    if( field != null ) {
-      field.applyAndRemove();
-    }
-  }
-  
-  public HolidayField getHolidayField() {
-    return field;
-  }
-  
-  public void setHolidayField(HolidayField field) {
-    this.field = field;
-  }
-  public void toggleHoliday() {
-    holiday = !holiday;
-  }
   public void setIsHoliday(boolean isHoliday) {
     holiday = isHoliday;
   }
@@ -114,39 +96,8 @@ public class Day {
     return id;
   }
   
-  public static String getNameofDay(int dayofweek) {
-    if( dayofweek == 0 ) {
-      return "Monday";
-    }
-    else if( dayofweek == 1 ) {
-      return "Tuesday";
-    }
-    else if( dayofweek == 2 ) {
-      return "Wednesday";
-    }
-    else if( dayofweek == 3 ) {
-      return "Thursday";
-    }
-    else if( dayofweek == 4 ) {
-      return "Friday";
-    }
-    return "";
-  }
-  
-  public static final String[] monthStrings = new String[] { "January", "February", "March", "April", "May", "June", "July", "August",
-		  "September", "October", "November", "December" };
-  public static String getNameofMonth(int monthofyear) {
-    return monthStrings[monthofyear%monthStrings.length];
-  }
-  public Day() {
-    blank = true;
-    this.text = "";
-    this.name = "blank";
-    this.month = "MONTH";
-  }
-  
   public void setMonth(int month) {
-    this.month = getNameofMonth(month);
+    this.month = Utils.getNameofMonth(month);
   }
   
   public String getMonth() {
@@ -166,5 +117,4 @@ public class Day {
   public String getText() {
     return text;
   }
-  
 }

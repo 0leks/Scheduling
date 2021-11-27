@@ -1,4 +1,4 @@
-package main;
+package ok.schedule;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -7,9 +7,10 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 import java.util.Scanner;
-import java.util.StringTokenizer;
 
 import javax.swing.JOptionPane;
+
+import ok.schedule.model.Employee;
 
 public class Preferences {
   

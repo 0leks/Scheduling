@@ -7,7 +7,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import main.Day;
+import ok.schedule.model.Day;
+import ok.schedule.model.MyCalendar;
 
 public class WebsiteScraper {
   
@@ -16,7 +17,7 @@ public class WebsiteScraper {
   public static void log(String format, Object...args) {
     System.out.printf(format + "\n", args);
   }
-  public static void querySchoolCalendar(Day[][] days, int targetYear, int targetMonth) {
+  public static void querySchoolCalendar(MyCalendar calendar, int targetYear, int targetMonth) {
     try {
       String urlString = schoolCalendarQuery.formatted(targetYear, targetMonth);
       System.out.println(urlString);
@@ -31,12 +32,12 @@ public class WebsiteScraper {
         Element dayDateBox = headline.selectFirst(".day-date-box");
         String month = dayDateBox.selectFirst(".month").text();
         int date = Integer.parseInt(dayDateBox.selectFirst(".date").text());
-        Day day = Utils.getDayByDate(days, date);
+        Day day = Utils.getDayByDate(calendar.days, date);
         if(day == null) {
           continue;
         }
         for(Element titleElem : headline.select(".event-title")) {
-          String eventTitle = titleElem.text();
+          String eventTitle = titleElem.text().trim();
           String lowered = eventTitle.toLowerCase();
           if (lowered.contains("spirit friday")) {
             continue;
@@ -47,7 +48,7 @@ public class WebsiteScraper {
               date, 
               dayDateBox.selectFirst(".day").text(),
               eventTitle);
-          day.setText(day.getText() + " " +eventTitle);
+          day.setText(day.getText() + " " + eventTitle);
           day.setIsHoliday(day.isHoliday() || isHoliday);
           System.out.println("updated day: " + day.getText());
         }

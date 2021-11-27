@@ -3,10 +3,14 @@ package ok.schedule;
 import java.io.*;
 import java.util.*;
 
-import main.*;
+import ok.schedule.model.Day;
+import ok.schedule.model.Employee;
 
 public class HtmlWriter {
-	private static final String JACKOLANTERN = "http://clipart-library.com/images/pc58gx99i.png";
+  
+  private static final String NORMAL_SPACE = "<a href=\"https://youtu.be/dQw4w9WgXcQ\" style=\"text-decoration: none\"> </a>";
+
+  private static final String JACKOLANTERN = "http://clipart-library.com/images/pc58gx99i.png";
 	private static final String SPARKLER = "http://clipart-library.com/image_gallery/284123.png";
 	private static final String CLOVER = "http://clipart-library.com/images_k/clover-transparent/clover-transparent-18.png";
 	private static final String HEART = "http://clipart-library.com/images_k/heart-clipart-transparent/heart-clipart-transparent-18.png";
@@ -20,7 +24,7 @@ public class HtmlWriter {
 		String url = null;
 		HashMap<String, HashMap<Integer, String>> events = new HashMap<>();
 		
-		for(String monthName : Day.monthStrings) {
+		for(String monthName : Utils.monthStrings) {
 			events.put(monthName, new HashMap<>());
 		}
 		
@@ -70,7 +74,7 @@ public class HtmlWriter {
 
 			fileOut.print("\n<body>\n");
 
-			fileOut.print("<h2>Noon Supervisors Schedule</h2>\n");
+			fileOut.print("<h2>Noon Supervisors" + NORMAL_SPACE + "Schedule</h2>\n");
 			fileOut.print("<h2>" + month + " " + year);
 			fileOut.print("</h2>\n");
 
