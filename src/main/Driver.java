@@ -32,12 +32,19 @@ import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.SwingConstants;
 import javax.swing.UIManager;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import ok.launcher.Updater;
 import ok.schedule.EditDayPanel;
@@ -45,6 +52,7 @@ import ok.schedule.EmployeeRowPanel;
 import ok.schedule.HolidayField;
 import ok.schedule.HtmlWriter;
 import ok.schedule.Utils;
+import ok.schedule.WebsiteScraper;
 
 public class Driver {
 	
@@ -71,6 +79,7 @@ public class Driver {
   private ViewPanel viewPanel;
   private JPanel buttonPanel;
 
+  private JLabel monthLabel;
   private JPanel timeframe;
   private JButton generateButton;
   private JButton save;
@@ -164,6 +173,11 @@ public class Driver {
 		mainPanel.add(buttonPanel);
 		mainPanel.add(viewPanel);
 
+    monthLabel = new JLabel("asdf", SwingConstants.CENTER);
+    monthLabel.setFont(MAIN_FONT);
+    monthLabel.setMaximumSize(new Dimension(BIG_NUMBER, 0));
+    monthLabel.setFocusable(false);
+    
 		timeframe = new JPanel();
 		timeframe.setOpaque(false);
 		timeframe.setLayout(new BoxLayout(timeframe, BoxLayout.LINE_AXIS));
@@ -177,29 +191,31 @@ public class Driver {
 		timeframe.add(Box.createRigidArea(new Dimension(BUTTON_PADDING, 0)));
 		timeframe.add(rightShift);
 
-	    editEmployees = new JButton("Edit Employees", Utils.loadImageIconResource("/edit_employee_icon.png", 32, 32));
-	    editEmployees.setFont(MAIN_FONT);
-	    editEmployees.setMaximumSize(new Dimension(BIG_NUMBER, 0));
-	    editEmployees.addActionListener(e -> switchtoEditPanel());
-	    generateButton = new JButton("Generate");
-	    generateButton.setFont(MAIN_FONT);
-	    generateButton.setMaximumSize(new Dimension(BIG_NUMBER, 0));
-	    generateButton.addActionListener(e -> generateButtonPressed());
+    editEmployees = new JButton("Edit Employees", Utils.loadImageIconResource("/edit_employee_icon.png", 32, 32));
+    editEmployees.setFont(MAIN_FONT);
+    editEmployees.setMaximumSize(new Dimension(BIG_NUMBER, 0));
+    editEmployees.addActionListener(e -> switchtoEditPanel());
+    generateButton = new JButton("Generate");
+    generateButton.setFont(MAIN_FONT);
+    generateButton.setMaximumSize(new Dimension(BIG_NUMBER, 0));
+    generateButton.addActionListener(e -> generateButtonPressed());
 
-	    save = new JButton("Save", Utils.loadImageIconResource("/save_icon.png", 32, 32));
-	    save.setFont(MAIN_FONT);
-	    save.setMaximumSize(new Dimension(BIG_NUMBER, 0));
-	    save.addActionListener(e -> writeToFile());
-	    
-	    buttonPanel.add(Box.createVerticalGlue());
+    save = new JButton("Save", Utils.loadImageIconResource("/save_icon.png", 32, 32));
+    save.setFont(MAIN_FONT);
+    save.setMaximumSize(new Dimension(BIG_NUMBER, 0));
+    save.addActionListener(e -> writeToFile());
+    
+    buttonPanel.add(Box.createVerticalGlue());
+    buttonPanel.add(monthLabel);
+    buttonPanel.add(Box.createRigidArea(new Dimension(0, BUTTON_PADDING)));
 		buttonPanel.add(timeframe);
 		buttonPanel.add(Box.createRigidArea(new Dimension(0, BUTTON_PADDING)));
-	    buttonPanel.add(editEmployees);
+    buttonPanel.add(editEmployees);
 		buttonPanel.add(Box.createRigidArea(new Dimension(0, BUTTON_PADDING)));
-	    buttonPanel.add(generateButton);
+    buttonPanel.add(generateButton);
 		buttonPanel.add(Box.createRigidArea(new Dimension(0, BUTTON_PADDING)));
-	    buttonPanel.add(save);
-	    buttonPanel.add(Box.createVerticalGlue());
+    buttonPanel.add(save);
+    buttonPanel.add(Box.createVerticalGlue());
 	    
 //	    Integer[] positionsOptions = new Integer[] { 5, 6, 7, 8, 9, 10, 11, 12};
 //	    JComboBox<Integer> numberPositions = new JComboBox<Integer>(positionsOptions);
@@ -213,6 +229,9 @@ public class Driver {
 	    for(Component c : buttonPanel.getComponents()) {
 	    	if(c instanceof JButton) {
 	    		((JButton)c).setAlignmentX(Component.CENTER_ALIGNMENT);
+	    	}
+	    	else if(c instanceof JLabel) {
+	    	  ((JLabel)c).setAlignmentX(Component.CENTER_ALIGNMENT);
 	    	}
 	    }
 	    frame.add(mainPanel, BorderLayout.CENTER);
@@ -434,9 +453,6 @@ public class Driver {
   public void setUpCalendar() {
     int maxNumberWeeks = 5;
     days = new Day[maxNumberWeeks][5]; // TODO
-    monthName = null;
-    monthNumber = 0;
-    year = 0;
 
     Calendar cal = Calendar.getInstance();
     // set day of month to 1
@@ -499,22 +515,11 @@ public class Driver {
     }
     days = newDays;
     customEdits = false;
-	frame.repaint();
-  }
-  
-  public Day getDaybyID(Day[][] cal, int id) {
-    if( cal == null ) {
-      return null;
-    }
-    for (int week = 0; week < days.length; week++) {
-      for (int day = 0; day < days[week].length; day++) {
-        
-        if( cal[week][day] != null && cal[week][day].getID() == id ) {
-          return cal[week][day];
-        }
-      }
-    }
-    return null;
+    
+    WebsiteScraper.querySchoolCalendar(days, year, monthNumber + 1);
+    monthLabel.setText(monthName + " " + year);
+    generateButtonPressed();
+    frame.repaint();
   }
 
   public class ViewPanel extends JPanel {
@@ -602,8 +607,7 @@ public class Driver {
             g.drawString(days[week][day].getOfficialDate() + " " + days[week][day].getName(), cellx + 3, celly + TINY_FONT.getSize() + 2);
             g.drawString(days[week][day].getMonth() + " " + days[week][day].getYear(), cellx + 3, celly + cellheight-4);
             g.setColor(Color.black);
-            g.setFont(MEDIUM_FONT);
-            g.drawString(days[week][day].getText(), cellx + cellwidth - g.getFontMetrics().stringWidth(days[week][day].getText()) - 2, celly + TINY_FONT.getSize() + 2);
+            g.drawString(days[week][day].getText(), cellx + cellwidth - g.getFontMetrics().stringWidth(days[week][day].getText()) - 2, celly + 2*TINY_FONT.getSize() + 2);
             if (days[week][day].isHoliday()) {
               g.setColor(Color.GRAY);
               g.setFont(TINY_FONT);
@@ -652,22 +656,10 @@ public class Driver {
 			JOptionPane.showMessageDialog(frame, "Failed to save to " + fileName, "ERROR", JOptionPane.ERROR_MESSAGE);
 		}
 	}
+	
 
 	public static void main(String[] args) {
-	  String fonts[] = GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
-	  int size = 20;
-	  BufferedImage image = new BufferedImage(200, (size+1)*fonts.length, BufferedImage.TYPE_BYTE_GRAY);
-	  Graphics2D g = image.createGraphics();
-    for (int i = 0; i < fonts.length; i++) {
-        g.setFont(new Font(fonts[i], Font.PLAIN, 20));
-        g.drawString(fonts[i], 2, (i+1)*20);
-    }
-    g.dispose();
-    try {
-      ImageIO.write(image, "png", new File("fonts.png"));
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
+//	  Utils.makeSampleFonts();
 		// new TestAssignment(null);
 		new Driver().run();
 	}

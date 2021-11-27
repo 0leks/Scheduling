@@ -2,6 +2,7 @@
 *.textfile
 *.exe
 *.sig
+*.html
 privatekey
 bin/
 jre/
