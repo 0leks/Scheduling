@@ -19,7 +19,7 @@ public class EditDayPanel extends JPanel {
 	private JCheckBox isHolidayCheckBox;
 	private JTextField noteText;
 	
-	private static final int GUI_WIDTH = 160;
+	private static final int GUI_WIDTH = 220;
 
 	public EditDayPanel(Day day) {
 		

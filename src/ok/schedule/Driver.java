@@ -353,6 +353,9 @@ public class Driver {
         return;
       }
       Day day = calendar.days[weekpressed][daypressed];
+      if(day.isUnused()) {
+    	  return;
+      }
       EditDayPanel editPanel = new EditDayPanel(day);
       
       Object[] options = {};

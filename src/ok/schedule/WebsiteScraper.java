@@ -14,6 +14,9 @@ public class WebsiteScraper {
   
   private static final String schoolCalendarQuery = "https://mohr.pleasantonusd.net/apps/events/%d/%d/?id=0";
 
+  private static final String[] HOLIDAY_INDICATORS = {"break", "no school"};
+  private static final String[] IGNORED_INDICATORS = {"council meeting", "board meeting", "book fair"};
+
   public static void log(String format, Object...args) {
     System.out.printf(format + "\n", args);
   }
@@ -42,13 +45,20 @@ public class WebsiteScraper {
           if (lowered.contains("spirit friday")) {
             continue;
           }
-          boolean isHoliday = lowered.contains("break") || lowered.contains("no school");
           log("event on %s, %d, %s with title:'%s'", 
               month, 
               date, 
               dayDateBox.selectFirst(".day").text(),
               eventTitle);
-          day.setText(day.getText() + " " + eventTitle);
+          boolean isHoliday = checkIfHoliday(lowered);
+          boolean isIgnored = checkIfIgnoredEvent(lowered);
+          if(isIgnored) {
+        	  continue;
+          }
+          if(!day.getText().isEmpty()) {
+        	  eventTitle = " " + eventTitle;
+          }
+          day.setText(day.getText() + eventTitle);
           day.setIsHoliday(day.isHoliday() || isHoliday);
           System.out.println("updated day: " + day.getText());
         }
@@ -56,5 +66,21 @@ public class WebsiteScraper {
     } catch (IOException e) {
       e.printStackTrace();
     }
+  }
+  private static boolean checkIfHoliday(String eventName) {
+	  for(String indicator : HOLIDAY_INDICATORS) {
+		  if(eventName.contains(indicator)) {
+			  return true;
+		  }
+	  }
+	  return false;
+  }
+  private static boolean checkIfIgnoredEvent(String eventName) {
+	  for(String indicator : IGNORED_INDICATORS) {
+		  if(eventName.contains(indicator)) {
+			  return true;
+		  }
+	  }
+	  return false;
   }
 }

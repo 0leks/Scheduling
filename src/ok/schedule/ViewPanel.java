@@ -78,16 +78,30 @@ public class ViewPanel extends JPanel {
         if( day == dayHovered && week == monthHovered ) {
           g.setColor(COLOR_HOVER);
         }
-        g.fillRect(cellx, celly, cellwidth, cellheight);
-        g.setColor(Color.black);
-        g.drawRect(cellx, celly, cellwidth, cellheight);
+        if(!calendar.days[week][day].isUnused()) {
+        	g.fillRect(cellx, celly, cellwidth, cellheight);
+        }
+
+        if(!calendar.days[week][day].isUnused()) {
+        	g.setColor(Color.BLACK);
+        	g.drawRect(cellx, celly, cellwidth, cellheight);
+        }
         if (calendar.days[week][day].getOfficialDate() != 0) {
           g.setColor(Color.GRAY);
           g.setFont(TINY_FONT);
           g.drawString(calendar.days[week][day].getOfficialDate() + " " + calendar.days[week][day].getName(), cellx + 3, celly + TINY_FONT.getSize() + 2);
           g.drawString(calendar.days[week][day].getMonth() + " " + calendar.days[week][day].getYear(), cellx + 3, celly + cellheight-4);
-          g.setColor(Color.black);
-          g.drawString(calendar.days[week][day].getText(), cellx + cellwidth - g.getFontMetrics().stringWidth(calendar.days[week][day].getText()) - 2, celly + 2*TINY_FONT.getSize() + 2);
+          if (calendar.days[week][day].isHoliday()) {
+        	  g.setColor(Color.black);
+        	  g.drawString(
+        			  calendar.days[week][day].getText(), 
+        			  cellx + cellwidth/2 - g.getFontMetrics().stringWidth(calendar.days[week][day].getText())/2, 
+        			  celly + cellheight/2 + TINY_FONT.getSize()/2);
+          }
+          else {
+        	g.setColor(Color.black);
+        	g.drawString(calendar.days[week][day].getText(), cellx + cellwidth - g.getFontMetrics().stringWidth(calendar.days[week][day].getText()) - 2, celly + 2*TINY_FONT.getSize() + 2);
+          }
           if (calendar.days[week][day].isHoliday()) {
             g.setColor(Color.GRAY);
             g.setFont(TINY_FONT);
@@ -108,7 +122,5 @@ public class ViewPanel extends JPanel {
         }
       }
     }
-    g.setColor(Color.black);
-    g.drawRect(0, 0, this.getWidth()-1, this.getHeight()-1);
   }
 }
