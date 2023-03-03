@@ -35,7 +35,7 @@ import javax.swing.UIManager;
 import ok.launcher.Updater;
 import ok.schedule.model.Day;
 import ok.schedule.model.Employee;
-import ok.schedule.model.EmployeeRoster;
+import ok.schedule.model.Settings;
 import ok.schedule.model.MyCalendar;
 
 import static ok.schedule.ViewPanel.*;
@@ -60,7 +60,7 @@ public class Driver {
   private EmployeeView employeeView;
 
   private MyCalendar calendar = new MyCalendar();
-  private EmployeeRoster roster = new EmployeeRoster();
+  private Settings settings = new Settings();
   private int monthNumber;
   private String monthName;
   private int year;
@@ -80,12 +80,12 @@ public class Driver {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-		Preferences.readEmployees(roster);
+		Preferences.readSettings(settings);
 		initializeFrame();
 		checkForUpdates();
 		initializePanels();
 		
-		employeeView = new EmployeeView(roster, frame, () -> switchtoMainPanel());
+		employeeView = new EmployeeView(settings, frame, () -> switchtoMainPanel());
 	  setUpCalendar();
 	    
 		frame.setVisible(true);
@@ -93,7 +93,7 @@ public class Driver {
 	}
 
 	private void initializeFrame() {
-		frame = new JFrame("Scheduling 2.0.7");
+		frame = new JFrame("Scheduling 2.1.0");
 		Dimension screensize = Toolkit.getDefaultToolkit().getScreenSize();
 		Dimension appsize = new Dimension(screensize.width * 9 / 10, screensize.height * 9 / 10);
 		frame.setSize(appsize);
@@ -129,7 +129,7 @@ public class Driver {
 		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.PAGE_AXIS));
 		buttonPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, Constants.BUTTON_PADDING));
 
-		viewPanel = new ViewPanel(calendar);
+		viewPanel = new ViewPanel(calendar, settings);
 		viewPanel.setPreferredSize(new Dimension(BIG_NUMBER, BIG_NUMBER));
 		viewPanel.addMouseListener(new MouseAdapter() {
 			@Override
@@ -181,9 +181,9 @@ public class Driver {
     numberedOrBulletPositions = new JCheckBox("Numbered Positions");
     numberedOrBulletPositions.setFont(MAIN_FONT);
     numberedOrBulletPositions.setMaximumSize(new Dimension(BIG_NUMBER, 0));
-    numberedOrBulletPositions.addActionListener(e -> roster.useNumberedPositions = numberedOrBulletPositions.isSelected());
+    numberedOrBulletPositions.addActionListener(e -> settings.useNumberedPositions = numberedOrBulletPositions.isSelected());
     numberedOrBulletPositions.setFocusable(false);
-    numberedOrBulletPositions.setSelected(roster.useNumberedPositions);
+    numberedOrBulletPositions.setSelected(settings.useNumberedPositions);
     
     buttonPanel.add(Box.createVerticalGlue());
     buttonPanel.add(monthLabel);
@@ -214,12 +214,12 @@ public class Driver {
 	}
 
 	private void generateButtonPressed() {
-		Preferences.writeEmployees(roster);
+		Preferences.writeSettings(settings);
 		if(!loseChangesConfirmPrompt()) {
 			return;
 		}
 		Assigner assigner = new Assigner();
-		Day[][] newDays = assigner.generateSchedule(calendar.days, roster.employees);
+		Day[][] newDays = assigner.generateSchedule(calendar.days, settings.employees);
 		if (calendar.days != null) {
 		  calendar.days = newDays;
 			customEdits = false;
@@ -258,7 +258,7 @@ public class Driver {
 
   public void switchtoMainPanel() {
     
-    Preferences.writeEmployees(roster);
+    Preferences.writeSettings(settings);
     
     frame.remove(employeeView.editPanel);
     frame.add(mainPanel, BorderLayout.CENTER);
@@ -339,7 +339,7 @@ public class Driver {
   }
 
 	public void writeToFile() {
-		Preferences.writeEmployees(roster);
+		Preferences.writeSettings(settings);
 		String fileName = "Mohr_" + year + "_" + monthName + "_Schedule";
 		fileName = JOptionPane.showInputDialog(frame, "Choose File Name", fileName);
 		if (fileName == null) {

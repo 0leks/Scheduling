@@ -5,14 +5,13 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.List;
 import java.util.Scanner;
 import java.util.StringTokenizer;
 
 import javax.swing.JOptionPane;
 
 import ok.schedule.model.Employee;
-import ok.schedule.model.EmployeeRoster;
+import ok.schedule.model.Settings;
 
 public class Preferences {
 	
@@ -88,6 +87,10 @@ public class Preferences {
   
   private static int getVersion() {
     initInput();
+    if (!fileIn.hasNextLine()) {
+	    closeInput();
+    	return 1;
+    }
     String firstLine = fileIn.nextLine();
     if (firstLine.contains(FILE_VERSION_KEY)) {
     	String[] split = firstLine.split(":");
@@ -119,7 +122,7 @@ public class Preferences {
     }
   }
   
-  public static void readEmployees(EmployeeRoster settings) {
+  public static void readSettings(Settings settings) {
     
 	int version = getVersion();
     if (version < 3) {
@@ -172,7 +175,7 @@ public class Preferences {
     closeInput();
   }
   
-  public static void writeEmployees(EmployeeRoster settings) {
+  public static void writeSettings(Settings settings) {
     initOutput();
     fileOut.println(FILE_VERSION_KEY + ": " + FILE_VERSION);
     fileOut.println(NUMBERED_POSITIONS_KEY + ": " + (settings.useNumberedPositions ? YES : NO));

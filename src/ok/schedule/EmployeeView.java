@@ -24,7 +24,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 
 import ok.schedule.model.Employee;
-import ok.schedule.model.EmployeeRoster;
+import ok.schedule.model.Settings;
 
 import static ok.schedule.Constants.*;
 
@@ -35,12 +35,12 @@ public class EmployeeView {
   JScrollPane employeePane;
   private HashMap<Employee, EmployeeRowPanel> employeeRowPanels = new HashMap<>();
   
-  private EmployeeRoster roster;
+  private Settings settings;
   private JFrame frame;
   private Runnable backButtonCallback;
   
-  public EmployeeView(EmployeeRoster roster, JFrame frame, Runnable backButtonCallback) {
-    this.roster = roster;
+  public EmployeeView(Settings settings, JFrame frame, Runnable backButtonCallback) {
+    this.settings = settings;
     this.frame = frame;
     this.backButtonCallback = backButtonCallback;
     editPanel = new JPanel();
@@ -53,7 +53,7 @@ public class EmployeeView {
     employeePanel.setBackground(COLOR_LIGHT_BACKGROUND);
     employeePanel.setBorder(BorderFactory.createEmptyBorder(BUTTON_PADDING, BUTTON_PADDING, BUTTON_PADDING, BUTTON_PADDING));
     employeePanel.add(Box.createVerticalGlue());
-    for (Employee e : roster.employees) {
+    for (Employee e : settings.employees) {
       addedEmployee(e);
     }
     employeePane = new JScrollPane(employeePanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
@@ -112,7 +112,7 @@ public class EmployeeView {
                   null, null, "John Smith");
     if (enteredName != null) {
       Employee newEmployee = new Employee(enteredName);
-      roster.employees.add(newEmployee);
+      settings.employees.add(newEmployee);
       addedEmployee(newEmployee);
     }
   }
@@ -132,7 +132,7 @@ public class EmployeeView {
       JMenuItem none = new JMenuItem("Any Position");
       none.addActionListener(event -> {
         employee.clearLockedPosition(dayClicked);
-        Preferences.writeEmployees(roster);
+        Preferences.writeSettings(settings);
         frame.repaint();
       });
       rightClickMenu.add(none);
@@ -147,7 +147,7 @@ public class EmployeeView {
             error.printStackTrace();
             JOptionPane.showMessageDialog(null, "Num format error at lock pos");
           }
-          Preferences.writeEmployees(roster);
+          Preferences.writeSettings(settings);
           frame.repaint();
         });
         rightClickMenu.add(lockPos);
@@ -160,7 +160,7 @@ public class EmployeeView {
       JMenuItem delete = new JMenuItem("Remove Employee");
       rightClickMenu.add(delete);
       delete.addActionListener(ee -> {
-        roster.employees.remove(employee);
+        settings.employees.remove(employee);
         removedEmployee(employee);
       });
       JMenuItem cancel = new JMenuItem("Cancel");
@@ -170,7 +170,7 @@ public class EmployeeView {
   }
   private void leftClickedEmployeeRowButton(Employee employee, int dayClicked, MouseEvent e) {
       employee.toggleAvailable(dayClicked);
-    Preferences.writeEmployees(roster);
+    Preferences.writeSettings(settings);
     frame.repaint();
   }
 

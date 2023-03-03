@@ -9,6 +9,7 @@ import java.awt.event.MouseMotionAdapter;
 
 import javax.swing.JPanel;
 
+import ok.schedule.model.Settings;
 import ok.schedule.model.MyCalendar;
 
 public class ViewPanel extends JPanel {
@@ -29,9 +30,11 @@ public class ViewPanel extends JPanel {
   private int monthHovered = -1;
   
   private MyCalendar calendar;
+  private Settings settings;
   
-  public ViewPanel(MyCalendar calendar) {
+  public ViewPanel(MyCalendar calendar, Settings settings) {
     this.calendar = calendar;
+    this.settings = settings;
     this.setBackground(COLOR_BACKGROUND);
     this.addMouseMotionListener(new MouseMotionAdapter() {
       @Override
@@ -112,7 +115,7 @@ public class ViewPanel extends JPanel {
               g.setColor(Color.black);
               g.setFont(employeeFont);
               int ypos = celly + TINY_FONT.getSize() + employeeFont.getSize() + 4 + index * (employeeFont.getSize()+4);
-              String toDraw1 = (1 + index) + "";
+              String toDraw1 = "" + (settings.useNumberedPositions ? (1 + index) : "-");
               if(calendar.days[week][day].getAssignments().size() > index) {
                 toDraw1 += " " + calendar.days[week][day].getAssignments().get(index).getName();
               }
