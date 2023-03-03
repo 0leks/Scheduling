@@ -1,3 +1,5 @@
+Preferences Version: 3
+Numbered Positions: N
 N Y 0 N N N John
 Y -1 N Y -1 Y -1 Y -1 Glen
 Y -1 Y -1 N Y -1 Y -1 Sally

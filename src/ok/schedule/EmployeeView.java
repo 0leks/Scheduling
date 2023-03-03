@@ -132,7 +132,7 @@ public class EmployeeView {
       JMenuItem none = new JMenuItem("Any Position");
       none.addActionListener(event -> {
         employee.clearLockedPosition(dayClicked);
-        Preferences.writeEmployees(roster.employees);
+        Preferences.writeEmployees(roster);
         frame.repaint();
       });
       rightClickMenu.add(none);
@@ -147,7 +147,7 @@ public class EmployeeView {
             error.printStackTrace();
             JOptionPane.showMessageDialog(null, "Num format error at lock pos");
           }
-          Preferences.writeEmployees(roster.employees);
+          Preferences.writeEmployees(roster);
           frame.repaint();
         });
         rightClickMenu.add(lockPos);
@@ -170,7 +170,7 @@ public class EmployeeView {
   }
   private void leftClickedEmployeeRowButton(Employee employee, int dayClicked, MouseEvent e) {
       employee.toggleAvailable(dayClicked);
-    Preferences.writeEmployees(roster.employees);
+    Preferences.writeEmployees(roster);
     frame.repaint();
   }
 

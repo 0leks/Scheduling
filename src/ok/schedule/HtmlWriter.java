@@ -67,7 +67,7 @@ public class HtmlWriter {
 			fileOut.print("li { font-weight: normal;font-size: 16px; }\n");
 			fileOut.print("td { height: 139px;}\n");
 			fileOut.print("h2 {text-align: center;}\n");
-			fileOut.print("ol { -webkit-margin-before: 5px; -webkit-margin-after: 5px; margin-block-start: 0.1em; margin-block-end: 0.1em;}\n");
+			fileOut.print("ol, ul { -webkit-margin-before: 5px; -webkit-margin-after: 5px; margin-block-start: 0.1em; margin-block-end: 0.1em;}\n");
 			fileOut.print("table, th, td {border: 1px solid black;border-collapse: collapse;}\n");
 			fileOut.print("</style>\n");
 			fileOut.print("</head>\n");

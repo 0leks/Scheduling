@@ -7,12 +7,16 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 import java.util.Scanner;
+import java.util.StringTokenizer;
 
 import javax.swing.JOptionPane;
 
 import ok.schedule.model.Employee;
+import ok.schedule.model.EmployeeRoster;
 
 public class Preferences {
+	
+  private static final int FILE_VERSION = 3;
   
   private static PrintWriter fileOut;
   private static Scanner fileIn;
@@ -20,6 +24,9 @@ public class Preferences {
   
   private static final String YES = "Y";
   private static final String NO = "N";
+  
+  private static final String FILE_VERSION_KEY = "Preferences Version";
+  private static final String NUMBERED_POSITIONS_KEY = "Numbered Positions";
   
   private static void initOutput() {
     if( fileOut != null ) {
@@ -59,38 +66,75 @@ public class Preferences {
     fileOut.close();
   }
   
-  private static boolean isLockPositionVersion() {
-    initInput();
+  private static boolean checkLineForLockPositionVersion(String line) {
+	StringTokenizer st = new StringTokenizer(line);
     int day = 0;
-    boolean isLockPositionVersion = true;
-    while(fileIn.hasNext()) {
-      String token = fileIn.next();
+    while(st.hasMoreTokens() && day < 5) {
+      String token = st.nextToken();
       if( token.equals(YES) ) {
-        String nextString = fileIn.next();
+        String nextString = st.nextToken();
         try {
           Integer.parseInt(nextString);
-          isLockPositionVersion = true;
+          return true;
         }
         catch(NumberFormatException ee) {
-          isLockPositionVersion = false;
+          return false;
         }
-        break;
       }
       day++;
-      if( day == 5 ) {
-        fileIn.nextLine();
-        day = 0;
-      }
     }
-    closeInput();
-    return isLockPositionVersion;
+    return false;
   }
   
-  public static void readEmployees(List<Employee> list) {
-    
-    boolean isLockPositionVersion = isLockPositionVersion();
-    
+  private static int getVersion() {
     initInput();
+    String firstLine = fileIn.nextLine();
+    if (firstLine.contains(FILE_VERSION_KEY)) {
+    	String[] split = firstLine.split(":");
+    	if (split.length < 2) {
+    		JOptionPane.showMessageDialog(null, firstLine, "ERROR in preferences", JOptionPane.ERROR_MESSAGE);
+    	}
+    	String versionString = split[1].strip();
+    	try {
+    		return Integer.parseInt(versionString);
+    	}
+    	catch (NumberFormatException e) {
+    		JOptionPane.showMessageDialog(null, firstLine, "NumberFormatException in preferences", JOptionPane.ERROR_MESSAGE);
+    		throw e;
+    	}
+    }
+    else {
+    	if (checkLineForLockPositionVersion(firstLine)) {
+    	    closeInput();
+    		return 2;
+    	}
+        while(fileIn.hasNext()) {
+        	if (checkLineForLockPositionVersion(fileIn.nextLine())) {
+        	    closeInput();
+        		return 2;
+        	}
+        }
+        closeInput();
+        return 1;
+    }
+  }
+  
+  public static void readEmployees(EmployeeRoster settings) {
+    
+	int version = getVersion();
+    if (version < 3) {
+    	initInput();
+    }
+    
+    settings.useNumberedPositions = false;
+    
+    if (version >= 3) {
+    	String numberedPositionsLines = fileIn.nextLine();
+    	String[] split = numberedPositionsLines.split(":");
+    	if (split[0].contains(NUMBERED_POSITIONS_KEY) && split.length == 2) {
+    		settings.useNumberedPositions = split[1].contains(YES);
+    	}
+    }
     
     int day = 0;
     Employee e = null;
@@ -101,7 +145,7 @@ public class Preferences {
       String token = fileIn.next();
       if( token.equals(YES) ) {
         // employee constructor sets all days to available by default
-        if( isLockPositionVersion ) {
+        if( version >= 2 ) {
           String lockedString = fileIn.next();
           try {
             int lockedPosition = Integer.parseInt(lockedString);
@@ -121,16 +165,18 @@ public class Preferences {
         String name = fileIn.nextLine();
         name = name.trim();
         e.setName(name);
-        list.add(e);
+        settings.employees.add(e);
         day = 0;
       }
     }
     closeInput();
   }
   
-  public static void writeEmployees(List<Employee> list) {
+  public static void writeEmployees(EmployeeRoster settings) {
     initOutput();
-    for( Employee e : list ) {
+    fileOut.println(FILE_VERSION_KEY + ": " + FILE_VERSION);
+    fileOut.println(NUMBERED_POSITIONS_KEY + ": " + (settings.useNumberedPositions ? YES : NO));
+    for( Employee e : settings.employees ) {
       writeEmployee(e);
     }
     closeOutput();

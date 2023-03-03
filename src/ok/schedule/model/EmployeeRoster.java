@@ -5,4 +5,5 @@ import java.util.List;
 
 public class EmployeeRoster {
   public List<Employee> employees = new ArrayList<>();
+  public boolean useNumberedPositions;
 }

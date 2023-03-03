@@ -80,7 +80,7 @@ public class Driver {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-		Preferences.readEmployees(roster.employees);
+		Preferences.readEmployees(roster);
 		initializeFrame();
 		checkForUpdates();
 		initializePanels();
@@ -181,7 +181,9 @@ public class Driver {
     numberedOrBulletPositions = new JCheckBox("Numbered Positions");
     numberedOrBulletPositions.setFont(MAIN_FONT);
     numberedOrBulletPositions.setMaximumSize(new Dimension(BIG_NUMBER, 0));
+    numberedOrBulletPositions.addActionListener(e -> roster.useNumberedPositions = numberedOrBulletPositions.isSelected());
     numberedOrBulletPositions.setFocusable(false);
+    numberedOrBulletPositions.setSelected(roster.useNumberedPositions);
     
     buttonPanel.add(Box.createVerticalGlue());
     buttonPanel.add(monthLabel);
@@ -212,6 +214,7 @@ public class Driver {
 	}
 
 	private void generateButtonPressed() {
+		Preferences.writeEmployees(roster);
 		if(!loseChangesConfirmPrompt()) {
 			return;
 		}
@@ -255,7 +258,7 @@ public class Driver {
 
   public void switchtoMainPanel() {
     
-    Preferences.writeEmployees(roster.employees);
+    Preferences.writeEmployees(roster);
     
     frame.remove(employeeView.editPanel);
     frame.add(mainPanel, BorderLayout.CENTER);
@@ -336,6 +339,7 @@ public class Driver {
   }
 
 	public void writeToFile() {
+		Preferences.writeEmployees(roster);
 		String fileName = "Mohr_" + year + "_" + monthName + "_Schedule";
 		fileName = JOptionPane.showInputDialog(frame, "Choose File Name", fileName);
 		if (fileName == null) {
