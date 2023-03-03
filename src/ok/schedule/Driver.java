@@ -21,6 +21,7 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
@@ -54,6 +55,7 @@ public class Driver {
   private JPanel timeframe;
   private JButton generateButton;
   private JButton save;
+  private JCheckBox numberedOrBulletPositions;
   private JButton editEmployees;
   private EmployeeView employeeView;
 
@@ -176,6 +178,11 @@ public class Driver {
     save.addActionListener(e -> writeToFile());
     save.setFocusable(false);
     
+    numberedOrBulletPositions = new JCheckBox("Numbered Positions");
+    numberedOrBulletPositions.setFont(MAIN_FONT);
+    numberedOrBulletPositions.setMaximumSize(new Dimension(BIG_NUMBER, 0));
+    numberedOrBulletPositions.setFocusable(false);
+    
     buttonPanel.add(Box.createVerticalGlue());
     buttonPanel.add(monthLabel);
     buttonPanel.add(Box.createRigidArea(new Dimension(0, Constants.BUTTON_PADDING)));
@@ -184,6 +191,8 @@ public class Driver {
     buttonPanel.add(editEmployees);
 		buttonPanel.add(Box.createRigidArea(new Dimension(0, Constants.BUTTON_PADDING)));
     buttonPanel.add(generateButton);
+    buttonPanel.add(Box.createRigidArea(new Dimension(0, Constants.BUTTON_PADDING)));
+    buttonPanel.add(numberedOrBulletPositions);
 		buttonPanel.add(Box.createRigidArea(new Dimension(0, Constants.BUTTON_PADDING)));
     buttonPanel.add(save);
     buttonPanel.add(Box.createVerticalGlue());
@@ -194,6 +203,9 @@ public class Driver {
 	    	}
 	    	else if(c instanceof JLabel) {
 	    	  ((JLabel)c).setAlignmentX(Component.CENTER_ALIGNMENT);
+	    	}
+	    	else if (c instanceof JCheckBox) {
+	    		((JCheckBox)c).setAlignmentX(Component.CENTER_ALIGNMENT);
 	    	}
 	    }
 	    frame.add(mainPanel, BorderLayout.CENTER);
@@ -331,7 +343,8 @@ public class Driver {
 		}
 		
 		fileName = fileName + ".html";
-		boolean success = HtmlWriter.writeToFile(fileName, year, monthName, calendar.days);
+		boolean useOrderedList = numberedOrBulletPositions.isSelected();
+		boolean success = HtmlWriter.writeToFile(fileName, year, monthName, calendar.days, useOrderedList);
 		if(success) {
 			JOptionPane.showMessageDialog(frame, "Saved " + fileName);
 		}

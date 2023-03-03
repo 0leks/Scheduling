@@ -54,7 +54,7 @@ public class HtmlWriter {
 		return "";
 	}
 
-	public static boolean writeToFile(String fileName, int year, String month, Day[][] days) {
+	public static boolean writeToFile(String fileName, int year, String month, Day[][] days, boolean useOrderedList) {
 		PrintWriter fileOut;
 		try {
 			fileOut = new PrintWriter(new FileWriter(fileName, false));
@@ -96,7 +96,7 @@ public class HtmlWriter {
 						fileOut.print("<ul> " + days[week][day].getText() + "</ul> ");
 					} else if (!days[week][day].isUnused()) {
 						fileOut.print(" " + days[week][day].getText());
-						fileOut.print("<ol> ");
+						fileOut.print(useOrderedList ? "<ol> " : "<ul> ");
 						List<Employee> assigned = days[week][day].getAssignments();
 						for (int position = 0; position < assigned.size(); position++) {
 							Employee e = assigned.get(position);
@@ -104,7 +104,7 @@ public class HtmlWriter {
 							fileOut.print(e.getName());
 							fileOut.print("</li> ");
 						}
-						fileOut.print("</ol> ");
+						fileOut.print(useOrderedList ? "</ol> " : "</ul> ");
 					}
 
 					fileOut.print("</td>\n");
